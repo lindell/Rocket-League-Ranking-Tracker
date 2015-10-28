@@ -13,13 +13,13 @@
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
         </Grid>
         
-        <Grid HorizontalAlignment="Left" Margin="68,120,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="duelRanking">
-            <Label Content="Duel Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Grid HorizontalAlignment="Left" Margin="68,120,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="dualsRanking">
+            <Label Content="Duals Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
         </Grid>
         
         <Grid HorizontalAlignment="Left" Margin="68,180,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="standardRanking">
-            <Label Content="Duel Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="Duals Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
         </Grid>
     </Grid>

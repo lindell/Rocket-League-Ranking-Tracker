@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
-    class DuelRanking : RankingModel
+    class DualsRanking : RankingModel
     {
-        public DuelRanking()
+        public DualsRanking()
         {
             address = "\"RocketLeague.exe\"+0150354C+7c+48+80+50+18c";
         }

@@ -28,17 +28,17 @@ namespace Rocket_League_Ranking_Tracker
             InitializeComponent();
 
             RankingModel solo = new SoloRanking();
-            RankingModel duel = new DuelRanking();
+            RankingModel duals = new DualsRanking();
             RankingModel standard = new StandardRanking();
 
             ProcessController pc = new ProcessController();
 
             pc.AddRankingModel(solo);
-            pc.AddRankingModel(duel);
+            pc.AddRankingModel(duals);
             pc.AddRankingModel(standard);
 
             soloRanking.DataContext = solo;
-            duelRanking.DataContext = duel;
+            dualsRanking.DataContext = duals;
             standardRanking.DataContext = standard;
 
             //rm.RocketLeagueProcess = Process.GetProcessesByName("RocketLeague")[0];
