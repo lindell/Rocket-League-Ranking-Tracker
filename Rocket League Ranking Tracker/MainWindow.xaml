@@ -19,7 +19,7 @@
         </Grid>
         
         <Grid HorizontalAlignment="Left" Margin="68,180,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="standardRanking">
-            <Label Content="Duals Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="Standard Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
         </Grid>
     </Grid>

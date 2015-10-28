@@ -56,7 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controller\ProcessController.cs" />
-    <Compile Include="Model\DuelRanking.cs" />
+    <Compile Include="Model\DualsRanking.cs" />
     <Compile Include="Model\RankingModel.cs" />
     <Compile Include="Model\SoloRanking.cs" />
     <Compile Include="Model\StandardRanking.cs" />
