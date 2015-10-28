@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
-    class RankingModel : INotifyPropertyChanged
+    class RankingModel : INotifyPropertyChanged, MemoryHandler
     {
         protected string address = "";
         int _Ranking;
@@ -32,9 +32,10 @@ namespace Rocket_League_Ranking_Tracker.Model
             }
         }
 
-        public void updateRanking()
+        public void UpdateMemory()
         {
-            if (RocketLeagueProcess != null) { 
+            if (RocketLeagueProcess != null)
+            {
                 var memory = new Memory(RocketLeagueProcess);
                 IntPtr rankingAddr = memory.GetAddress(address);
 

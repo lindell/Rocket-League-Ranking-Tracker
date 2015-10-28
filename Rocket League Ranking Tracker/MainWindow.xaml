@@ -12,15 +12,25 @@
             <Label Content="Solo Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
         </Grid>
-        
+
         <Grid HorizontalAlignment="Left" Margin="68,120,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="dualsRanking">
             <Label Content="Duals Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
         </Grid>
-        
+
         <Grid HorizontalAlignment="Left" Margin="68,180,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="standardRanking">
             <Label Content="Standard Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Margin="18,12,0,0" Width="400" Height="48" VerticalAlignment="Top" x:Name="scores">
+            <Label Content="Goals:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Goals}" HorizontalAlignment="Left" Margin="57,10,0,0" VerticalAlignment="Top" Height="26" Width="40"/>
+            <Label Content="Shots:" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Shots}" HorizontalAlignment="Left" Margin="153,10,0,0" VerticalAlignment="Top" Height="26" Width="40"/>
+            <Label Content="Saves:" HorizontalAlignment="Left" Margin="203,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Saves}" HorizontalAlignment="Left" Margin="250,10,0,0" VerticalAlignment="Top" Height="26" Width="40"/>
+            <Label Content="Points:" HorizontalAlignment="Left" Margin="303,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Points}" HorizontalAlignment="Left" Margin="350,10,0,0" VerticalAlignment="Top" Height="26" Width="40"/>
         </Grid>
     </Grid>
 </Window>
