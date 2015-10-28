@@ -1,0 +1,26 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Rocket_League_Ranking_Tracker"
+        xmlns:Controller="clr-namespace:Rocket_League_Ranking_Tracker.Controller" x:Class="Rocket_League_Ranking_Tracker.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="450">
+    <Grid Height="319" VerticalAlignment="Bottom">
+        <Grid HorizontalAlignment="Left" Margin="68,60,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="soloRanking">
+            <Label Content="Solo Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
+        </Grid>
+        
+        <Grid HorizontalAlignment="Left" Margin="68,120,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="duelRanking">
+            <Label Content="Duel Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
+        </Grid>
+        
+        <Grid HorizontalAlignment="Left" Margin="68,180,0,0" Width="192" Height="48" VerticalAlignment="Top" x:Name="standardRanking">
+            <Label Content="Duel Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="106,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
+        </Grid>
+    </Grid>
+</Window>
