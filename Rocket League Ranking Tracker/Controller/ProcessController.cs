@@ -14,7 +14,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
     {
         private readonly BackgroundWorker _processWorker;
 
-        List<RankingModel> rankingModels = new List<RankingModel>();
+        List<MemoryHandler> rankingModels = new List<MemoryHandler>();
 
         public ProcessController()
         {
@@ -24,8 +24,8 @@ namespace Rocket_League_Ranking_Tracker.Controller
             _processWorker.RunWorkerAsync();
         }
 
-        public void AddRankingModel(RankingModel rankingModel){ rankingModels.Add(rankingModel); }
-        public void RemoveRankingModel(RankingModel rankingModel){ rankingModels.Remove(rankingModel); }
+        public void AddMemoryHandler(MemoryHandler rankingModel){ rankingModels.Add(rankingModel); }
+        public void RemoveMemoryHandler(MemoryHandler rankingModel){ rankingModels.Remove(rankingModel); }
 
         private void processWorker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -36,14 +36,14 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 Process rlProcess = GetProcessIfRunning();
                 if (rlProcess != null)
                 {
-                    foreach (RankingModel rm in rankingModels) { 
+                    foreach (MemoryHandler rm in rankingModels) { 
                         rm.RocketLeagueProcess = rlProcess;
                     }
                 }
 
-                foreach (RankingModel rm in rankingModels)
+                foreach (MemoryHandler rm in rankingModels)
                 {
-                    rm.updateRanking();
+                    rm.UpdateMemory();
                 }
             }
         }

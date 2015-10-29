@@ -63,7 +63,9 @@
     </ApplicationDefinition>
     <Compile Include="Controller\ProcessController.cs" />
     <Compile Include="Model\DualsRanking.cs" />
+    <Compile Include="Model\MemoryHandler.cs" />
     <Compile Include="Model\RankingModel.cs" />
+    <Compile Include="Model\Score.cs" />
     <Compile Include="Model\SoloRanking.cs" />
     <Compile Include="Model\StandardRanking.cs" />
     <Compile Include="Utilities\Memory\Memory.cs" />

@@ -36,16 +36,19 @@ namespace Rocket_League_Ranking_Tracker
             RankingModel solo = new SoloRanking(dbConnection);
             RankingModel duals = new DualsRanking(dbConnection);
             RankingModel standard = new StandardRanking(dbConnection);
+            Score scoreModel = new Score();
 
             ProcessController pc = new ProcessController();
 
-            pc.AddRankingModel(solo);
-            pc.AddRankingModel(duals);
-            pc.AddRankingModel(standard);
+            pc.AddMemoryHandler(solo);
+            pc.AddMemoryHandler(duals);
+            pc.AddMemoryHandler(standard);
+            pc.AddMemoryHandler(scoreModel);
 
             soloRanking.DataContext = solo;
             dualsRanking.DataContext = duals;
             standardRanking.DataContext = standard;
+            scores.DataContext = scoreModel;
 
             //rm.RocketLeagueProcess = Process.GetProcessesByName("RocketLeague")[0];
             //rm.updateRanking();
