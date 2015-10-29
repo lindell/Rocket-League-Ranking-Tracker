@@ -2,7 +2,9 @@
 using Rocket_League_Ranking_Tracker.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,10 +28,14 @@ namespace Rocket_League_Ranking_Tracker
         public MainWindow()
         {
             InitializeComponent();
+            string connectionString = @"Data Source =" + Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\database.db;Version=3;";
+            SQLiteConnection dbConnection = new SQLiteConnection(connectionString);
+            dbConnection.Open();
+            
 
-            RankingModel solo = new SoloRanking();
-            RankingModel duals = new DualsRanking();
-            RankingModel standard = new StandardRanking();
+            RankingModel solo = new SoloRanking(dbConnection);
+            RankingModel duals = new DualsRanking(dbConnection);
+            RankingModel standard = new StandardRanking(dbConnection);
 
             ProcessController pc = new ProcessController();
 
