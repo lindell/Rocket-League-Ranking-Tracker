@@ -1,6 +1,7 @@
 ﻿using Rocket_League_Ranking_Tracker.Controller;
 using Rocket_League_Ranking_Tracker.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
@@ -28,11 +29,16 @@ namespace Rocket_League_Ranking_Tracker
         public MainWindow()
         {
             InitializeComponent();
-            string connectionString = @"Data Source =" + Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\database.db;Version=3;";
+            string dbPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\database.db";
+            string connectionString = @"Data Source =" + dbPath + ";Version=3;";
+            if (!File.Exists(dbPath))
+            {
+                CreateDatabase(dbPath, connectionString);
+            }
+            
             SQLiteConnection dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
             
-
             RankingModel solo = new SoloRanking(dbConnection);
             RankingModel duals = new DualsRanking(dbConnection);
             RankingModel standard = new StandardRanking(dbConnection);
@@ -53,6 +59,21 @@ namespace Rocket_League_Ranking_Tracker
             //rm.RocketLeagueProcess = Process.GetProcessesByName("RocketLeague")[0];
             //rm.updateRanking();
             //;
+        }
+
+        private void CreateDatabase(string path,string connectionString)
+        {
+            SQLiteConnection.CreateFile(path);
+            SQLiteConnection dbConnection = new SQLiteConnection(connectionString);
+            dbConnection.Open();
+            ArrayList rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "StandardRanking" });
+            foreach(string table in rankingTables)
+            {
+                string query = "create table if not exists " + table + " (Id INTEGER Primary Key, Rank int NOT NULL, Date DateTime NOT NULL); ";
+                SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+                command.ExecuteNonQuery();
+            }
+            dbConnection.Close();
         }
     }
 }
