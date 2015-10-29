@@ -1,36 +1,14 @@
--- Script Date: 2015-10-29 10:31  - ErikEJ.SqlCeScripting version 3.5.2.56
--- Database information:
--- Database: \Rocket-League-Ranking-Tracker\Rocket League Ranking Tracker\Data\database.db
--- ServerVersion: 3.8.10.2
--- DatabaseSize: 7 KB
--- Created: 2015-10-28 17:27
+create table SoloRanking(
+	Id INTEGER Primary Key,
+	Rank int NOT NULL,
+	Date DateTime NOT NULL);
 
--- User Table information:
--- Number of tables: 3
--- DualsRanking: -1 row(s)
--- SoloRanking: -1 row(s)
--- StandardRanking: -1 row(s)
+create table DualsRanking(
+	Id INTEGER Primary Key,
+	Rank int NOT NULL,
+	Date DateTime NOT NULL);
 
-SELECT 1;
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
-CREATE TABLE [StandardRanking] (
-  [Id] bigint NOT NULL
-, [Rank] int NULL
-, [Date] datetime NULL
-, CONSTRAINT [sqlite_master_PK_StandardRanking] PRIMARY KEY ([Id])
-);
-CREATE TABLE [SoloRanking] (
-  [Id] bigint NOT NULL
-, [Rank] int NULL
-, [Date] datetime NULL
-, CONSTRAINT [sqlite_master_PK_SoloRanking] PRIMARY KEY ([Id])
-);
-CREATE TABLE [DualsRanking] (
-  [Id] bigint NOT NULL
-, [Rank] int NULL
-, [Date] datetime NULL
-, CONSTRAINT [sqlite_master_PK_DualsRanking] PRIMARY KEY ([Id])
-);
-COMMIT;
-
+create table StandardRanking(
+	Id INTEGER Primary Key,
+	Rank int NOT NULL,
+	Date DateTime NOT NULL);
