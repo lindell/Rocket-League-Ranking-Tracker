@@ -27,16 +27,19 @@ namespace Rocket_League_Ranking_Tracker
         private ArrayList entriesToRemove;
         private SQLiteConnection dbConnection;
         private string table;
+
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
             this.dbConnection = dbConnection;
             this.table = table;
+            entries = new ArrayList();
+            entriesToRemove = new ArrayList();
+
             string query = "SELECT * FROM " + table;
             SQLiteCommand command = new SQLiteCommand(query, dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-            entries = new ArrayList();
-            entriesToRemove = new ArrayList();
+
             while (reader.Read())
             {
                 entries.Add(new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] });
@@ -72,25 +75,13 @@ namespace Rocket_League_Ranking_Tracker
             lvRankHistory.Items.Refresh();
         }
 
-    }
-
-    public class ListViewList : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void NotifyPropertyChanged(String info)
+        private class TableStruct
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            public long Id { get; set; }
+            public int Rank { get; set; }
+            public DateTime Date { get; set; }
         }
     }
 
-    public class TableStruct
-    {
-        public long Id { get; set; }
-        public int Rank { get; set; }
-        public DateTime Date { get; set; }
-    }
+
 }
