@@ -26,6 +26,7 @@ namespace Rocket_League_Ranking_Tracker
     /// </summary>
     public partial class MainWindow : Window
     {
+        private SQLiteConnection dbConnection;
         public MainWindow()
         {
             InitializeComponent();
@@ -36,7 +37,7 @@ namespace Rocket_League_Ranking_Tracker
                 CreateDatabase(dbPath, connectionString);
             }
             
-            SQLiteConnection dbConnection = new SQLiteConnection(connectionString);
+            dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
             
             RankingModel solo = new SoloRanking(dbConnection);
@@ -74,6 +75,21 @@ namespace Rocket_League_Ranking_Tracker
                 command.ExecuteNonQuery();
             }
             dbConnection.Close();
+        }
+
+        private void SoloRankingHistoryButtonClick(object sender, RoutedEventArgs e)
+        {
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloRanking");
+        }
+
+        private void DualsRankingHistoryButtonClick(object sender, RoutedEventArgs e)
+        {
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "DualsRanking");
+        }
+
+        private void StandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
+        {
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "StandardRanking");
         }
     }
 }

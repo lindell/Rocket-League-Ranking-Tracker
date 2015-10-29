@@ -1,0 +1,31 @@
+﻿<Window x:Class="Rocket_League_Ranking_Tracker.HistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Rocket_League_Ranking_Tracker"
+        mc:Ignorable="d"
+        Title="History of " Height="300" Width="300">
+    <Grid>
+        <ListView Margin="10, 10, 10, 40" Name="lvRankHistory">
+            <ListView.Resources>
+                <Style TargetType="{x:Type GridViewColumnHeader}">
+                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Id" Width="50" DisplayMemberBinding="{Binding Id}" />
+                    <GridViewColumn Header="Rank" Width="50" DisplayMemberBinding="{Binding Rank}" />
+                    <GridViewColumn Header="Date" Width="150" DisplayMemberBinding="{Binding Date}" />
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Grid>
+            <Button Content="Export to Excel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Width="90" Click="ExportToExcelButonClick"></Button>
+            <Button Content="Apply Changes" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,105,10" Width="90" Click="ApplyChangesButtonClick"></Button>
+        </Grid>
+    </Grid>
+    
+</Window>
