@@ -8,17 +8,23 @@
         Title="History of " Height="300" Width="300">
     <Grid>
         <ListView Margin="10, 10, 10, 40" Name="lvRankHistory">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Edit" Click="EditItemClick"></MenuItem>
+                    <MenuItem Header="Delete" Click="DeleteItemClick"></MenuItem>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.Resources>
                 <Style TargetType="{x:Type GridViewColumnHeader}">
                     <Setter Property="HorizontalContentAlignment" Value="Left" />
                 </Style>
             </ListView.Resources>
             <ListView.View>
+
                 <GridView>
                     <GridViewColumn Header="Id" Width="50" DisplayMemberBinding="{Binding Id}" />
                     <GridViewColumn Header="Rank" Width="50" DisplayMemberBinding="{Binding Rank}" />
                     <GridViewColumn Header="Date" Width="150" DisplayMemberBinding="{Binding Date}" />
-
                 </GridView>
             </ListView.View>
         </ListView>

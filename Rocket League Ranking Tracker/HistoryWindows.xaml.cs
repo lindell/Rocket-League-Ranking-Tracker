@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
@@ -21,13 +23,20 @@ namespace Rocket_League_Ranking_Tracker
     /// </summary>
     public partial class HistoryWindow : Window
     {
+        private ArrayList entries;
+        private ArrayList entriesToRemove;
+        private SQLiteConnection dbConnection;
+        private string table;
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
+            this.dbConnection = dbConnection;
+            this.table = table;
             string query = "SELECT * FROM " + table;
             SQLiteCommand command = new SQLiteCommand(query, dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-            ArrayList entries = new ArrayList();
+            entries = new ArrayList();
+            entriesToRemove = new ArrayList();
             while (reader.Read())
             {
                 entries.Add(new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] });
@@ -43,7 +52,38 @@ namespace Rocket_League_Ranking_Tracker
 
         private void ApplyChangesButtonClick(object sender, RoutedEventArgs e)
         {
+            foreach(TableStruct entry in entriesToRemove)
+            {
+                string query = " DELETE FROM " + table + " WHERE Id = " + entry.Id + ";";
+                SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private void EditItemClick(object sender, RoutedEventArgs e)
+        {
             throw new NotImplementedException();
+        }
+
+        private void DeleteItemClick(object sender, RoutedEventArgs e)
+        {
+            entriesToRemove.Add((TableStruct)lvRankHistory.SelectedItem);
+            entries.Remove((TableStruct)lvRankHistory.SelectedItem);
+            lvRankHistory.Items.Refresh();
+        }
+
+    }
+
+    public class ListViewList : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(String info)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(info));
+            }
         }
     }
 
