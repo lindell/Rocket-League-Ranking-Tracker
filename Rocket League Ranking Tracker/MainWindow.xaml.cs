@@ -32,10 +32,8 @@ namespace Rocket_League_Ranking_Tracker
             InitializeComponent();
             string dbPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\database.db";
             string connectionString = @"Data Source =" + dbPath + ";Version=3;";
-            if (!File.Exists(dbPath))
-            {
-                CreateDatabase(dbPath, connectionString);
-            }
+
+            CreateDatabase(dbPath, connectionString);
             
             dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
@@ -68,7 +66,10 @@ namespace Rocket_League_Ranking_Tracker
 
         private void CreateDatabase(string path,string connectionString)
         {
-            SQLiteConnection.CreateFile(path);
+            if (!File.Exists(path))
+            {
+                SQLiteConnection.CreateFile(path);
+            }
             SQLiteConnection dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
             ArrayList rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "SoloStandardRanking", "StandardRanking" });
