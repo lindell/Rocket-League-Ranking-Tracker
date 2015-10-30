@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Rocket_League_Ranking_Tracker"
         mc:Ignorable="d"
-        Title="History of " Height="300" Width="300">
+        Title="History" Height="311.68" Width="438.934" SizeToContent="Width">
     <Grid>
         <DataGrid Margin="10, 10, 10, 40" Name="rankHistoryDataGrid">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Width="50" IsReadOnly="False" Binding="{Binding Id}"/>
                 <DataGridTextColumn Header="Rank" Width="50" IsReadOnly="False" Binding="{Binding Rank}"/>
-                <DataGridTextColumn Header="Date" Width="50" IsReadOnly="False" Binding="{Binding Date}"/>  
+                <DataGridTextColumn Header="Date" Width="50" IsReadOnly="False" Binding="{Binding Date}"/>
             </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu>
@@ -49,5 +49,5 @@
             <Button Content="Apply Changes" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,105,10" Width="90" Click="ApplyChangesButtonClick"></Button>
         </Grid>
     </Grid>
-    
+
 </Window>
