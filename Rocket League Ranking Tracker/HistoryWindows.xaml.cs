@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Rocket_League_Ranking_Tracker
 {
@@ -61,6 +62,43 @@ namespace Rocket_League_Ranking_Tracker
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
         {
             throw new NotImplementedException();
+        }
+
+        private void ExportAsCsvClick(object sender, RoutedEventArgs e)
+        {
+            string csvString = "Id,Ranking,Date\n";
+
+            string query = "SELECT * FROM " + table;
+            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var id = (long) reader["Id"];
+                var rank = (int) reader["Rank"];
+                var date = (DateTime) reader["Date"];
+                csvString += id + "," + rank + "," + date + "\n";
+            }
+
+            //Save File
+            SaveFileDialog csvFileDialog = new SaveFileDialog();
+            csvFileDialog.Filter = "CSV file|*.csv";
+            csvFileDialog.Title = "Save CSV File";
+            csvFileDialog.ShowDialog();
+
+            if (csvFileDialog.FileName != "")
+            {
+                //Create Unicode converter
+                UnicodeEncoding uniEncoding = new UnicodeEncoding();
+
+                //Get Filestream
+                System.IO.FileStream fs = (System.IO.FileStream)csvFileDialog.OpenFile();
+
+                //Write to file
+                fs.Write(uniEncoding.GetBytes(csvString),0, uniEncoding.GetByteCount(csvString));
+
+                fs.Close();
+            }
         }
 
         private void ApplyChangesButtonClick(object sender, RoutedEventArgs e)
