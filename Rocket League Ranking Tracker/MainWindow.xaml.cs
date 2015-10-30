@@ -56,6 +56,7 @@ namespace Rocket_League_Ranking_Tracker
             dualsRanking.DataContext = duals;
             standardRanking.DataContext = standard;
             scores.DataContext = scoreModel;
+            processInfo.DataContext = pc;
 
             //rm.RocketLeagueProcess = Process.GetProcessesByName("RocketLeague")[0];
             //rm.updateRanking();
