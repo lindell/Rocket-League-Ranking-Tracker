@@ -81,9 +81,11 @@ namespace Rocket_League_Ranking_Tracker
             }
 
             //Save File
-            SaveFileDialog csvFileDialog = new SaveFileDialog();
-            csvFileDialog.Filter = "CSV file|*.csv";
-            csvFileDialog.Title = "Save CSV File";
+            var csvFileDialog = new SaveFileDialog
+            {
+                Filter = "CSV file|*.csv",
+                Title = "Save CSV File"
+            };
             csvFileDialog.ShowDialog();
 
             if (csvFileDialog.FileName != "")

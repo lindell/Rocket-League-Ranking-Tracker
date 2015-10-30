@@ -5,14 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Rocket_League_Ranking_Tracker"
         mc:Ignorable="d"
-        Title="History" Height="311.68" Width="438.934" SizeToContent="Width">
+        Title="History" Height="312.295" Width="438.934" SizeToContent="Width">
     <Grid>
         <DataGrid Margin="10, 10, 10, 40" Name="rankHistoryDataGrid">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Id" Width="50" IsReadOnly="False" Binding="{Binding Id}"/>
-                <DataGridTextColumn Header="Rank" Width="50" IsReadOnly="False" Binding="{Binding Rank}"/>
-                <DataGridTextColumn Header="Date" Width="50" IsReadOnly="False" Binding="{Binding Date}"/>
-            </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Delete" Click="DeleteItemClick"></MenuItem>
@@ -45,9 +40,9 @@
             </ListView.View>
         </ListView>-->
         <Grid>
-            <Button Content="Export to Excel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Width="90" Click="ExportToExcelButonClick" IsEnabled="False"></Button>
+            <Button Content="Export to Excel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,200,10" Width="90" Click="ExportToExcelButonClick" IsEnabled="False"></Button>
             <Button Content="Export as CSV" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,105,10" Width="90" Click="ExportAsCsvClick"></Button>
-            <Button Content="Apply Changes" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,200,10" Width="90" Click="ApplyChangesButtonClick"></Button>
+            <Button Content="Apply Changes" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Width="90" Click="ApplyChangesButtonClick"></Button>
         </Grid>
     </Grid>
 
