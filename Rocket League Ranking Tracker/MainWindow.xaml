@@ -15,16 +15,21 @@
             <Button Content="Show History" HorizontalAlignment="Right" Margin="10,10,10,10" Width="90" Click="SoloRankingHistoryButtonClick"></Button>
         </Grid>
 
-        <Grid HorizontalAlignment="Left" Margin="41.176,120,0,0" Width="300" Height="48" VerticalAlignment="Top" x:Name="dualsRanking" Grid.Column="1">
+        <Grid HorizontalAlignment="Left" Margin="41,113,0,0" Width="300" Height="48" VerticalAlignment="Top" x:Name="doublesRanking">
             <Label Content="Duals Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="120,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
             <Button Content="Show History" HorizontalAlignment="Right" Margin="10,10,10,10" Width="90" Click="DualsRankingHistoryButtonClick"></Button>
 
         </Grid>
-        <Grid HorizontalAlignment="Left" Margin="41.176,180,0,0" Width="300" Height="48" VerticalAlignment="Top" x:Name="standardRanking" Grid.Column="1">
+        <Grid HorizontalAlignment="Left" Margin="41,166,0,0" Width="300" Height="48" VerticalAlignment="Top" x:Name="soloStandardRanking">
             <Label Content="Standard Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="120,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"></Label>
-            <Button Content="Show History" HorizontalAlignment="Right" Margin="10,10,10,10" Width="90" Click="DualsRankingHistoryButtonClick"></Button>
+            <Button Content="Show History" HorizontalAlignment="Right" Margin="10,10,10,10" Width="90" Click="SoloStandardRankingHistoryButtonClick"></Button>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Margin="41,219,0,0" Width="300" Height="48" VerticalAlignment="Top" x:Name="standardRanking">
+            <Label Content="Standard Ranking:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Label Content="{Binding Ranking}" HorizontalAlignment="Left" Margin="120,10,0,0" VerticalAlignment="Top" Height="26" Width="76" RenderTransformOrigin="2.796,2.321"/>
+            <Button Content="Show History" HorizontalAlignment="Right" Margin="10,10,10,10" Width="90" Click="StandardRankingHistoryButtonClick"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Margin="18,12,0,0" Width="400" Height="48" VerticalAlignment="Top" x:Name="scores" Grid.ColumnSpan="2">
             <Label Content="Goals:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
@@ -37,7 +42,6 @@
             <Label Content="{Binding Points}" HorizontalAlignment="Left" Margin="350,10,0,0" VerticalAlignment="Top" Height="26" Width="40"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="39" Margin="18,0,0,0" VerticalAlignment="Top" Width="399" x:Name="processInfo">
-
             <TextBlock Text="Searing for Rocket League process..." FontStyle="Italic" FontWeight="Bold" Grid.ColumnSpan="2">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">

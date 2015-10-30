@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
-    class SoloRanking : RankingModel
+    class DoublesRanking : RankingModel
     {
-        public SoloRanking(SQLiteConnection con) : base(con)
+        public DoublesRanking(SQLiteConnection con) : base(con)
         {
-            address = "\"RocketLeague.exe\"+015034C4+228+80+40+18c";
-            table = "SoloRanking";
+            address = "\"RocketLeague.exe\"+015034C4+228+80+50+18c";
+            table = "DualsRanking";
         }
     }
 }

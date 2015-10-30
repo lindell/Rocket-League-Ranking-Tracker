@@ -41,19 +41,22 @@ namespace Rocket_League_Ranking_Tracker
             dbConnection.Open();
             
             RankingModel solo = new SoloRanking(dbConnection);
-            RankingModel duals = new DualsRanking(dbConnection);
+            RankingModel doubles = new DoublesRanking(dbConnection);
+            RankingModel soloStandard = new SoloStandardRanking(dbConnection);
             RankingModel standard = new StandardRanking(dbConnection);
             Score scoreModel = new Score();
 
             ProcessController pc = new ProcessController();
 
             pc.AddMemoryHandler(solo);
-            pc.AddMemoryHandler(duals);
+            pc.AddMemoryHandler(doubles);
+            pc.AddMemoryHandler(soloStandard);
             pc.AddMemoryHandler(standard);
             pc.AddMemoryHandler(scoreModel);
 
             soloRanking.DataContext = solo;
-            dualsRanking.DataContext = duals;
+            doublesRanking.DataContext = doubles;
+            soloStandardRanking.DataContext = soloStandard;
             standardRanking.DataContext = standard;
             scores.DataContext = scoreModel;
             processInfo.DataContext = pc;
@@ -68,7 +71,7 @@ namespace Rocket_League_Ranking_Tracker
             SQLiteConnection.CreateFile(path);
             SQLiteConnection dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
-            ArrayList rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "StandardRanking" });
+            ArrayList rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "SoloStandardRanking", "StandardRanking" });
             foreach(string table in rankingTables)
             {
                 string query = "create table if not exists " + table + " (Id INTEGER Primary Key, Rank int NOT NULL, Date DateTime NOT NULL); ";
@@ -86,6 +89,11 @@ namespace Rocket_League_Ranking_Tracker
         private void DualsRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
             HistoryWindow historyWindow = new HistoryWindow(dbConnection, "DualsRanking");
+        }
+
+        private void SoloStandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
+        {
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloStandardRanking");
         }
 
         private void StandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
