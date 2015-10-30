@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data.SQLite;
 using System.Linq;
@@ -23,8 +24,9 @@ namespace Rocket_League_Ranking_Tracker
     /// </summary>
     public partial class HistoryWindow : Window
     {
-        private ArrayList entries;
+        private ObservableCollection<TableStruct> entries;
         private ArrayList entriesToRemove;
+        private ArrayList entriesToUpdate;
         private SQLiteConnection dbConnection;
         private string table;
 
@@ -33,8 +35,9 @@ namespace Rocket_League_Ranking_Tracker
             InitializeComponent();
             this.dbConnection = dbConnection;
             this.table = table;
-            entries = new ArrayList();
+            entries = new ObservableCollection<TableStruct>();
             entriesToRemove = new ArrayList();
+            entriesToUpdate = new ArrayList();
 
             string query = "SELECT * FROM " + table;
             SQLiteCommand command = new SQLiteCommand(query, dbConnection);
@@ -42,10 +45,17 @@ namespace Rocket_League_Ranking_Tracker
 
             while (reader.Read())
             {
-                entries.Add(new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] });
+                var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                entry.PropertyChanged += EntryChanged;
+                entries.Add(entry);
             }
-            lvRankHistory.ItemsSource = entries;
+            rankHistoryDataGrid.ItemsSource = entries;
             Show();
+        }
+
+        private void EntryChanged(object sender, PropertyChangedEventArgs e)
+        {
+            entriesToUpdate.Add((TableStruct)sender);
         }
 
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
@@ -55,31 +65,50 @@ namespace Rocket_League_Ranking_Tracker
 
         private void ApplyChangesButtonClick(object sender, RoutedEventArgs e)
         {
-            foreach(TableStruct entry in entriesToRemove)
+            foreach(TableStruct entry in entriesToUpdate)
+            {
+                string query = string.Format("UPDATE {0} SET Rank = {1} , Date = '{2}' WHERE Id = {3};",table, entry.Rank,entry.Date, entry.Id);
+                SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+                command.ExecuteNonQuery();
+                
+            }
+            entriesToUpdate.Clear();
+
+            foreach (TableStruct entry in entriesToRemove)
             {
                 string query = " DELETE FROM " + table + " WHERE Id = " + entry.Id + ";";
                 SQLiteCommand command = new SQLiteCommand(query, dbConnection);
                 command.ExecuteNonQuery();
             }
-        }
-
-        private void EditItemClick(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
+            entriesToRemove.Clear();
         }
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)
         {
-            entriesToRemove.Add((TableStruct)lvRankHistory.SelectedItem);
-            entries.Remove((TableStruct)lvRankHistory.SelectedItem);
-            lvRankHistory.Items.Refresh();
+            entriesToRemove.Add((TableStruct)rankHistoryDataGrid.SelectedItem);
+            entries.Remove((TableStruct)rankHistoryDataGrid.SelectedItem);
+            rankHistoryDataGrid.Items.Refresh();
         }
 
-        private class TableStruct
+        private class TableStruct : INotifyPropertyChanged
         {
-            public long Id { get; set; }
-            public int Rank { get; set; }
-            public DateTime Date { get; set; }
+            private long _id;
+            private int _rank;
+            private DateTime _date;
+
+            public long Id { get { return _id; } set { _id = value; NotifyPropertyChanged("Id"); } }
+            public int Rank { get { return _rank; } set { _rank = value; NotifyPropertyChanged("Rank"); } }
+            public DateTime Date { get { return _date; } set { _date = value; NotifyPropertyChanged("Date"); } }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void NotifyPropertyChanged(String info)
+            {
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs(info));
+                }
+            }
         }
     }
 
