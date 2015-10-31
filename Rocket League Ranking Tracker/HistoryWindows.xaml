@@ -14,33 +14,8 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
-        <!--<ListView Margin="10, 10, 10, 40" Name="lvRankHistory">
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Edit" Click="EditItemClick"></MenuItem>
-                    <MenuItem Header="Delete" Click="DeleteItemClick"></MenuItem>
-                </ContextMenu>
-            </ListView.ContextMenu>
-            <ListView.Resources>
-                <Style TargetType="{x:Type GridViewColumnHeader}">
-                    <Setter Property="HorizontalContentAlignment" Value="Left" />
-                </Style>
-            </ListView.Resources>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseRightButtonDown" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Id" Width="50" DisplayMemberBinding="{Binding Id}" />
-                    <GridViewColumn Header="Rank" Width="50" DisplayMemberBinding="{Binding Rank}" />
-                    <GridViewColumn Header="Date" Width="150" DisplayMemberBinding="{Binding Date}" />
-                </GridView>
-            </ListView.View>
-        </ListView>-->
         <Grid>
-            <Button Content="Export to Excel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,200,10" Width="90" Click="ExportToExcelButonClick" IsEnabled="False"></Button>
+            <Button Content="Export to Excel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,200,10" Width="90" Click="ExportToExcelButonClick"></Button>
             <Button Content="Export as CSV" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,105,10" Width="90" Click="ExportAsCsvClick"></Button>
             <Button Content="Apply Changes" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Width="90" Click="ApplyChangesButtonClick"></Button>
         </Grid>

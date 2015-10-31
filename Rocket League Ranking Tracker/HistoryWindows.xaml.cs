@@ -17,6 +17,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.IO;
 
 namespace Rocket_League_Ranking_Tracker
 {
@@ -61,7 +63,57 @@ namespace Rocket_League_Ranking_Tracker
 
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            var excelApp = new Excel.Application();
+            excelApp.Visible = true;
+            //excelApp.Workbooks.Add(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\Standard.xltx");
+            excelApp.Workbooks.Add();
+
+            Excel._Worksheet workSheet = (Excel.Worksheet)excelApp.ActiveSheet;
+
+            string query = "SELECT * FROM " + table;
+            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            var row = 1;
+            workSheet.Cells[row, "A"] = table;
+            workSheet.Cells[row, "A"].Font.Bold = true;
+            row++;
+            workSheet.Cells[row, "A"] = "Id";
+            workSheet.Cells[row, "B"] = "Rank";
+            workSheet.Cells[row, "C"] = "Date";
+
+            while (reader.Read())
+            {
+                row++;
+                var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                workSheet.Cells[row, "A"] = entry.Id;
+                workSheet.Cells[row, "B"] = entry.Rank;
+                workSheet.Cells[row, "C"] = entry.Date;
+            }
+            workSheet.Columns.AutoFit();
+
+            // Add chart.
+            var charts = workSheet.ChartObjects() as
+                Microsoft.Office.Interop.Excel.ChartObjects;
+            var chartObject = charts.Add(60, 10, 300, 300) as
+                Microsoft.Office.Interop.Excel.ChartObject;
+            var chart = chartObject.Chart;
+
+            var range = workSheet.get_Range("B3","B"+row);
+
+            // Set chart range.
+            chart.SetSourceData(workSheet.Range["B3", "B" + row], Excel.XlRowCol.xlColumns);
+
+            // Set chart properties.
+            chart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
+            chart.ChartWizard(Source: range,
+                Title: "Rank",
+                CategoryTitle: "Dates",
+                ValueTitle: table);
+            chart.SeriesCollection(1).XValues = workSheet.Range["C2", "C" + row];
+            chart.SeriesCollection(1).Name = table;
+            chart.ChartArea.Left = 250;
+            chart.ChartArea.Width = 100 + row*40;
+
         }
 
         private void ExportAsCsvClick(object sender, RoutedEventArgs e)
@@ -129,6 +181,7 @@ namespace Rocket_League_Ranking_Tracker
             entries.Remove((TableStruct)rankHistoryDataGrid.SelectedItem);
             rankHistoryDataGrid.Items.Refresh();
         }
+
 
         private class TableStruct : INotifyPropertyChanged
         {
