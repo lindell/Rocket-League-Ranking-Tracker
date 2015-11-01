@@ -1,60 +1,45 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data.SQLite;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Microsoft.Win32;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
+using System.Data.SQLite;
+using System.Windows;
+using Microsoft.Win32;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Collections;
+using Rocket_League_Ranking_Tracker.Model;
 
-namespace Rocket_League_Ranking_Tracker
+namespace Rocket_League_Ranking_Tracker.Controller
 {
-    /// <summary>
-    /// Interaction logic for Window1.xaml
-    /// </summary>
-    public partial class HistoryWindow : Window
+    class HistoryWindowController: HistoryWindowControllerBase
     {
-        private ObservableCollection<TableStruct> entries;
-        private ArrayList entriesToRemove;
-        private ArrayList entriesToUpdate;
         private SQLiteConnection dbConnection;
         private string table;
 
-        public HistoryWindow(SQLiteConnection dbConnection, string table)
+        public HistoryWindowController(SQLiteConnection dbConnection, string table)
         {
-            InitializeComponent();
             this.dbConnection = dbConnection;
             this.table = table;
-            entries = new ObservableCollection<TableStruct>();
+            Entries = new ObservableCollection<TableStruct>();
             entriesToRemove = new ArrayList();
             entriesToUpdate = new ArrayList();
 
             string query = "SELECT * FROM " + table;
             SQLiteCommand command = new SQLiteCommand(query, dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
-
+            
+            //Fill entry list with entries to be shown 
             while (reader.Read())
             {
                 var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
                 entry.PropertyChanged += EntryChanged;
-                entries.Add(entry);
+                Entries.Add(entry);
             }
-            rankHistoryDataGrid.ItemsSource = entries;
-            Show();
+            
         }
 
         private void EntryChanged(object sender, PropertyChangedEventArgs e)
@@ -62,7 +47,7 @@ namespace Rocket_League_Ranking_Tracker
             entriesToUpdate.Add((TableStruct)sender);
         }
 
-        private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
+        public override void ExportToExcel()
         {
             //Start excel app
             Excel.Application excelApp;
@@ -110,25 +95,29 @@ namespace Rocket_League_Ranking_Tracker
                 Microsoft.Office.Interop.Excel.ChartObject;
             var chart = chartObject.Chart;
 
-            var dataRange = workSheet.get_Range("B3","B"+row);
+            var dataRange = workSheet.get_Range("B3", "B" + row);
 
             // Set chart range.
 
             // Set chart properties.
-            chart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlXYScatterLines;
+            chart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers;
             chart.ChartWizard(Source: dataRange,
                 Title: table,
                 CategoryTitle: "Dates",
                 ValueTitle: "Rank");
             chart.SeriesCollection(1).XValues = workSheet.Range["C3", "C" + row];
             chart.SeriesCollection(1).Name = table;
+            //((Excel.Axis)chart.Axes(Excel.XlAxisGroup.xlSecondary)).Type = Excel.XlAxisType.xlCategory;
+            Excel.Axis axis = (Excel.Axis)chart.Axes(
+                    Excel.XlAxisType.xlSeriesAxis,
+                    Excel.XlAxisGroup.xlSecondary);
+            axis.Type = 
             chart.ChartArea.Left = 250;
-            chart.ChartArea.Width = 100 + row*40;
+            chart.ChartArea.Width = 100 + row * 20;
             excelApp.Visible = true;
-
         }
 
-        private void ExportAsCsvClick(object sender, RoutedEventArgs e)
+        public override void ExportAsCSV()
         {
             string csvString = "Id,Ranking,Date\n";
 
@@ -138,9 +127,9 @@ namespace Rocket_League_Ranking_Tracker
 
             while (reader.Read())
             {
-                var id = (long) reader["Id"];
-                var rank = (int) reader["Rank"];
-                var date = (DateTime) reader["Date"];
+                var id = (long)reader["Id"];
+                var rank = (int)reader["Rank"];
+                var date = (DateTime)reader["Date"];
                 csvString += id + "," + rank + "," + date + "\n";
             }
 
@@ -174,14 +163,14 @@ namespace Rocket_League_Ranking_Tracker
             }
         }
 
-        private void ApplyChangesButtonClick(object sender, RoutedEventArgs e)
+        public override void ApplyChanges()
         {
-            foreach(TableStruct entry in entriesToUpdate)
+            foreach (TableStruct entry in entriesToUpdate)
             {
-                string query = string.Format("UPDATE {0} SET Rank = {1} , Date = '{2}' WHERE Id = {3};",table, entry.Rank,entry.Date, entry.Id);
+                string query = string.Format("UPDATE {0} SET Rank = {1} , Date = '{2}' WHERE Id = {3};", table, entry.Rank, entry.Date, entry.Id);
                 SQLiteCommand command = new SQLiteCommand(query, dbConnection);
                 command.ExecuteNonQuery();
-                
+
             }
             entriesToUpdate.Clear();
 
@@ -194,35 +183,10 @@ namespace Rocket_League_Ranking_Tracker
             entriesToRemove.Clear();
         }
 
-        private void DeleteItemClick(object sender, RoutedEventArgs e)
+        public override void DeleteItem(TableStruct itemToRemove)
         {
-            entriesToRemove.Add((TableStruct)rankHistoryDataGrid.SelectedItem);
-            entries.Remove((TableStruct)rankHistoryDataGrid.SelectedItem);
-            rankHistoryDataGrid.Items.Refresh();
-        }
-
-
-        private class TableStruct : INotifyPropertyChanged
-        {
-            private long _id;
-            private int _rank;
-            private DateTime _date;
-
-            public long Id { get { return _id; } set { _id = value; NotifyPropertyChanged("Id"); } }
-            public int Rank { get { return _rank; } set { _rank = value; NotifyPropertyChanged("Rank"); } }
-            public DateTime Date { get { return _date; } set { _date = value; NotifyPropertyChanged("Date"); } }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            private void NotifyPropertyChanged(String info)
-            {
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs(info));
-                }
-            }
+            entriesToRemove.Add(itemToRemove);
+            Entries.Remove(itemToRemove);
         }
     }
-
-
 }

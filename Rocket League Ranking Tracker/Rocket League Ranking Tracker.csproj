@@ -81,6 +81,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controller\HistoryController.cs" />
+    <Compile Include="Controller\HistoryControllerBase.cs" />
     <Compile Include="Controller\ProcessController.cs" />
     <Compile Include="Model\DoublesRanking.cs" />
     <Compile Include="Model\MemoryHandler.cs" />
@@ -91,8 +93,8 @@
     <Compile Include="Model\StandardRanking.cs" />
     <Compile Include="Utilities\Memory\Memory.cs" />
     <Compile Include="Utilities\Memory\Win32.cs" />
-    <Compile Include="HistoryWindows.xaml.cs">
-      <DependentUpon>HistoryWindows.xaml</DependentUpon>
+    <Compile Include="HistoryWindow.xaml.cs">
+      <DependentUpon>HistoryWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -106,7 +108,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="HistoryWindows.xaml">
+    <Page Include="HistoryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
