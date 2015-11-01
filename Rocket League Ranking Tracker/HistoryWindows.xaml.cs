@@ -64,18 +64,18 @@ namespace Rocket_League_Ranking_Tracker
 
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
         {
-            //Check if Excel is installed
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe");
-            if (key == null)
+            //Start excel app
+            Excel.Application excelApp;
+            try
             {
-                System.Windows.MessageBox.Show("To be able to export to Excel, Excel must be installed","Excel not installed" ,new MessageBoxButton(), MessageBoxImage.Error);
-                key.Close();
+                excelApp = new Excel.Application();
+            }
+            catch (Exception)
+            {
+                System.Windows.MessageBox.Show("Problem launching Excel. Make sure excel is installed properly and try again.", "Error", new MessageBoxButton(), MessageBoxImage.Error);
                 return;
             }
-            key.Close();
 
-            //Start excel app
-            var excelApp = new Excel.Application();
             excelApp.Workbooks.Add();
 
             Excel._Worksheet workSheet = (Excel.Worksheet)excelApp.ActiveSheet;
