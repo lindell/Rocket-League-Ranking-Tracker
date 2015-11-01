@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data.SQLite;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -157,12 +158,19 @@ namespace Rocket_League_Ranking_Tracker
                 UnicodeEncoding uniEncoding = new UnicodeEncoding();
 
                 //Get Filestream
-                System.IO.FileStream fs = (System.IO.FileStream)csvFileDialog.OpenFile();
+                try
+                {
+                    FileStream fs = (System.IO.FileStream)csvFileDialog.OpenFile();
 
-                //Write to file
-                fs.Write(uniEncoding.GetBytes(csvString),0, uniEncoding.GetByteCount(csvString));
+                    //Write to file
+                    fs.Write(uniEncoding.GetBytes(csvString), 0, uniEncoding.GetByteCount(csvString));
 
-                fs.Close();
+                    fs.Close();
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("The program can't write to the file!\nPlease close any other program that has the file open.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
