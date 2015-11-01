@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Rocket_League_Ranking_Tracker"
         mc:Ignorable="d"
-        Title="History" Height="312.295" Width="438.934" SizeToContent="Width">
+        Title="History" Height="312.295" Width="438.934" SizeToContent="Width" ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
     <Grid>
         <DataGrid Margin="10, 10, 10, 40" Name="rankHistoryDataGrid">
             <DataGrid.ContextMenu>

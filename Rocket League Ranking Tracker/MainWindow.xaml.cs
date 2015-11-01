@@ -59,9 +59,6 @@ namespace Rocket_League_Ranking_Tracker
             scores.DataContext = scoreModel;
             processInfo.DataContext = pc;
 
-            //rm.RocketLeagueProcess = Process.GetProcessesByName("RocketLeague")[0];
-            //rm.updateRanking();
-            //;
         }
 
         private void CreateDatabase(string path,string connectionString)
@@ -84,22 +81,22 @@ namespace Rocket_League_Ranking_Tracker
 
         private void SoloRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloRanking");
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloRanking") {Owner = this};
         }
 
         private void DualsRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "DualsRanking");
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "DualsRanking") { Owner = this };
         }
 
         private void SoloStandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloStandardRanking");
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloStandardRanking") { Owner = this };
         }
 
         private void StandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "StandardRanking");
+            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "StandardRanking") { Owner = this };
         }
     }
 }
