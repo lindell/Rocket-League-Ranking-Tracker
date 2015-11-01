@@ -49,9 +49,10 @@ namespace Rocket_League_Ranking_Tracker
             dataSourceList.Add(tmp);
             dataSourceList.Add(table);
             lineChart.DataContext = dataSourceList;
-            lineChart.Width += 60 * tmp.Count;
             rankHistoryDataGrid.ItemsSource = controller.Entries;
+            //this.Width = 50 * tmp.Count;
             Show();
+
         }
 
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)

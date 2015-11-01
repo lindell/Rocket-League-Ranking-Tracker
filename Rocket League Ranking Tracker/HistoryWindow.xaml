@@ -9,30 +9,28 @@
         Title="History" SizeToContent="Width" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Height="487.211" Width="714.761">
     <Grid>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240" MaxWidth="240"/>
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <DataGrid  x:Name="rankHistoryDataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="220" MaxWidth="220" Margin="10, 10, 10, 40" >
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Delete" Click="DeleteItemClick"/>
-                    </ContextMenu>
-                </DataGrid.ContextMenu>
-            </DataGrid>
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2">
-                <chartingToolkit:Chart Name="lineChart" Title="Ranking" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,10,10,40" Width="200" MaxWidth="1500">
-                    <chartingToolkit:LineSeries             
+            <DockPanel LastChildFill="True">
+                
+                <DataGrid  x:Name="rankHistoryDataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="10, 10, 10, 40" DockPanel.Dock="Left">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Delete" Click="DeleteItemClick"/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+                <!--<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2">-->
+                <chartingToolkit:Chart Name="lineChart" Title="Ranking" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,10,10,40" MaxWidth="1500" DockPanel.Dock="Right">
+                        <chartingToolkit:LineSeries             
                                                             Title="{Binding [1]}"
                                                             DependentValuePath="Value" 
                                                             IndependentValuePath="Key"
                                                             ItemsSource="{Binding [0]}"
                                                             IsSelectionEnabled="True"/>
 
-                </chartingToolkit:Chart>
-            </Grid>
+                    </chartingToolkit:Chart>
+                <!--</Grid>-->
+            </DockPanel>
+            
 
         </Grid>
         <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom">
