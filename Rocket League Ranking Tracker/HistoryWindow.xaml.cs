@@ -20,6 +20,7 @@ using Microsoft.Win32;
 using Rocket_League_Ranking_Tracker.Controller;
 using System.Data.SQLite;
 using Rocket_League_Ranking_Tracker.Model;
+using Charting = System.Windows.Controls.DataVisualization.Charting;
 
 namespace Rocket_League_Ranking_Tracker
 {
@@ -29,12 +30,26 @@ namespace Rocket_League_Ranking_Tracker
     public partial class HistoryWindow : Window
     {
 
-        HistoryWindowControllerBase controller; 
-
+        HistoryWindowControllerBase controller;
+        string Table { get; set; }
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
+            this.Table = table;
             controller = new HistoryWindowController(dbConnection, table);
+            List<KeyValuePair<string, int>> tmp = new List<KeyValuePair<string, int>>();
+
+            foreach (HistoryWindowControllerBase.TableStruct tableStruct in controller.Entries)
+            {
+                tmp.Add(new KeyValuePair<string, int>(tableStruct.Date.ToString(), tableStruct.Rank));
+            }
+            //var dataSourceList = new List<List<KeyValuePair<string, int>>>();
+            //TODO: Fix bindings in xaml to not use datasourcelist as it does now
+            var dataSourceList = new List<object>();
+            dataSourceList.Add(tmp);
+            dataSourceList.Add(table);
+            lineChart.DataContext = dataSourceList;
+            lineChart.Width += 60 * tmp.Count;
             rankHistoryDataGrid.ItemsSource = controller.Entries;
             Show();
         }
@@ -58,5 +73,6 @@ namespace Rocket_League_Ranking_Tracker
         {
             controller.DeleteItem((HistoryWindowControllerBase.TableStruct)rankHistoryDataGrid.SelectedItem);
         }
+
     }
 }

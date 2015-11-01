@@ -111,7 +111,6 @@ namespace Rocket_League_Ranking_Tracker.Controller
             Excel.Axis axis = (Excel.Axis)chart.Axes(
                     Excel.XlAxisType.xlSeriesAxis,
                     Excel.XlAxisGroup.xlSecondary);
-            axis.Type = 
             chart.ChartArea.Left = 250;
             chart.ChartArea.Width = 100 + row * 20;
             excelApp.Visible = true;
