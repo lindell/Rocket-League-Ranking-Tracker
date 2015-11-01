@@ -63,16 +63,22 @@ namespace Rocket_League_Ranking_Tracker
 
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
         {
+            //Check if Excel is installed
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\excel.exe");
+            if (key == null)
+            {
+                System.Windows.MessageBox.Show("To be able to export to Excel, Excel must be installed","Excel not installed" ,new MessageBoxButton(), MessageBoxImage.Error);
+                key.Close();
+                return;
+            }
+            key.Close();
+
+            //Start excel app
             var excelApp = new Excel.Application();
-            excelApp.Visible = true;
-            //excelApp.Workbooks.Add(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\Standard.xltx");
             excelApp.Workbooks.Add();
 
             Excel._Worksheet workSheet = (Excel.Worksheet)excelApp.ActiveSheet;
-
-            string query = "SELECT * FROM " + table;
-            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            //Initiate appearance of workbook
             var row = 1;
             workSheet.Cells[row, "A"] = table;
             workSheet.Cells[row, "A"].Font.Bold = true;
@@ -81,8 +87,13 @@ namespace Rocket_League_Ranking_Tracker
             workSheet.Cells[row, "B"] = "Rank";
             workSheet.Cells[row, "C"] = "Date";
 
+            // Read from database
+            string query = "SELECT * FROM " + table;
+            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+            SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
+                //Insert into excel workbook
                 row++;
                 var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
                 workSheet.Cells[row, "A"] = entry.Id;
@@ -94,25 +105,25 @@ namespace Rocket_League_Ranking_Tracker
             // Add chart.
             var charts = workSheet.ChartObjects() as
                 Microsoft.Office.Interop.Excel.ChartObjects;
-            var chartObject = charts.Add(60, 10, 300, 300) as
+            var chartObject = charts.Add(250, 10, 300, 300) as
                 Microsoft.Office.Interop.Excel.ChartObject;
             var chart = chartObject.Chart;
 
-            var range = workSheet.get_Range("B3","B"+row);
+            var dataRange = workSheet.get_Range("B3","B"+row);
 
             // Set chart range.
-            chart.SetSourceData(workSheet.Range["B3", "B" + row], Excel.XlRowCol.xlColumns);
 
             // Set chart properties.
-            chart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLine;
-            chart.ChartWizard(Source: range,
-                Title: "Rank",
+            chart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlXYScatterLines;
+            chart.ChartWizard(Source: dataRange,
+                Title: table,
                 CategoryTitle: "Dates",
-                ValueTitle: table);
-            chart.SeriesCollection(1).XValues = workSheet.Range["C2", "C" + row];
+                ValueTitle: "Rank");
+            chart.SeriesCollection(1).XValues = workSheet.Range["C3", "C" + row];
             chart.SeriesCollection(1).Name = table;
             chart.ChartArea.Left = 250;
             chart.ChartArea.Width = 100 + row*40;
+            excelApp.Visible = true;
 
         }
 
