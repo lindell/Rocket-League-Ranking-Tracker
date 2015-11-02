@@ -3,6 +3,7 @@ using Rocket_League_Ranking_Tracker.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
@@ -13,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -27,9 +29,11 @@ namespace Rocket_League_Ranking_Tracker
     public partial class MainWindow : Window
     {
         private SQLiteConnection dbConnection;
+        private NotifyIcon notifyIcon;
         public MainWindow()
         {
             InitializeComponent();
+            //TODO: Remove parent parent thingy
             string dbPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\database.db";
             string connectionString = @"Data Source =" + dbPath + ";Version=3;";
 
@@ -59,6 +63,17 @@ namespace Rocket_League_Ranking_Tracker
             scores.DataContext = scoreModel;
             processInfo.DataContext = pc;
 
+            notifyIcon = new System.Windows.Forms.NotifyIcon();
+            //TODO: Remove parent parent thingy
+            notifyIcon.Icon = new System.Drawing.Icon(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\logo.ico");
+            notifyIcon.Visible = true;
+            notifyIcon.Click +=
+                delegate (object sender, EventArgs args)
+                {
+                    this.Show();
+                    this.WindowState = WindowState.Normal;
+                };
+            Closing += OnWindowClosing;
         }
 
         private void CreateDatabase(string path,string connectionString)
@@ -97,6 +112,19 @@ namespace Rocket_League_Ranking_Tracker
         private void StandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
             HistoryWindow historyWindow = new HistoryWindow(dbConnection, "StandardRanking") { Owner = this };
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == System.Windows.WindowState.Minimized)
+                this.Hide();
+
+            base.OnStateChanged(e);
+        }
+
+        public void OnWindowClosing(object sender, CancelEventArgs e)
+        {
+            notifyIcon.Visible = false;
         }
     }
 }
