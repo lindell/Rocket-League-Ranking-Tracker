@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
-    interface MemoryHandler
+    interface IMemoryHandler
     {
         void UpdateMemory();
         Process RocketLeagueProcess { get; set; }

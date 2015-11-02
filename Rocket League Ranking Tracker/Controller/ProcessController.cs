@@ -3,10 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -14,11 +11,11 @@ namespace Rocket_League_Ranking_Tracker.Controller
     {
         private readonly BackgroundWorker _processWorker;
 
-        private Process _RLProcess;
-        private bool searching = true;
+        private Process _rlProcess;
+        private bool _searching = true;
 
-        public Process RLProcess { get { return _RLProcess; } set { _RLProcess = value; NotifyPropertyChanged("Shots"); Searching=(value==null); } }
-        public bool Searching { get { return searching; } set { searching = value; NotifyPropertyChanged("Searching"); } }
+        public Process RlProcess { get { return _rlProcess; } set { _rlProcess = value; NotifyPropertyChanged("Shots"); Searching=(value==null); } }
+        public bool Searching { get { return _searching; } set { _searching = value; NotifyPropertyChanged("Searching"); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,7 +27,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
         }
 
-        List<MemoryHandler> memoryHandlers = new List<MemoryHandler>();
+        List<IMemoryHandler> memoryHandlers = new List<IMemoryHandler>();
 
         public ProcessController()
         {
@@ -40,22 +37,22 @@ namespace Rocket_League_Ranking_Tracker.Controller
             _processWorker.RunWorkerAsync();
         }
 
-        public void AddMemoryHandler(MemoryHandler memoryHandler){ memoryHandlers.Add(memoryHandler); }
-        public void RemoveMemoryHandler(MemoryHandler memoryHandler) { memoryHandlers.Remove(memoryHandler); }
+        public void AddMemoryHandler(IMemoryHandler memoryHandler){ memoryHandlers.Add(memoryHandler); }
+        public void RemoveMemoryHandler(IMemoryHandler memoryHandler) { memoryHandlers.Remove(memoryHandler); }
 
         private void processWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             while (!_processWorker.CancellationPending)
             {
-                RLProcess = GetProcessIfRunning();
-                if (RLProcess != null)
+                RlProcess = GetProcessIfRunning();
+                if (RlProcess != null)
                 {
-                    foreach (MemoryHandler memoryHandler in memoryHandlers) {
-                        memoryHandler.RocketLeagueProcess = RLProcess;
+                    foreach (IMemoryHandler memoryHandler in memoryHandlers) {
+                        memoryHandler.RocketLeagueProcess = RlProcess;
                     }
                 }
 
-                foreach (MemoryHandler rm in memoryHandlers)
+                foreach (IMemoryHandler rm in memoryHandlers)
                 {
                     rm.UpdateMemory();
                 }

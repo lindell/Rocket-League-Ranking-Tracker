@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rocket_League_Ranking_Tracker.Utilities.Memory;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -12,18 +8,19 @@ namespace Rocket_League_Ranking_Tracker.Model
 {
     class RankingModel : INotifyPropertyChanged, MemoryHandler
     {
-        protected string address = "";
-        protected string table = "";
+        protected string Address = "";
+        protected string Table = "";
 
-        int _Ranking;
-        protected SQLiteConnection dbConnection;
+        private int _ranking;
+
+        protected SQLiteConnection DbConnection;
 
         public RankingModel(SQLiteConnection dbConnection)
         {
-            this.dbConnection = dbConnection;
+            DbConnection = dbConnection;
         }
 
-        public int Ranking{ get { return _Ranking; } set { _Ranking = value; NotifyPropertyChanged("Ranking"); } }
+        public int Ranking{ get { return _ranking; } set { _ranking = value; NotifyPropertyChanged("Ranking"); } }
 
         public Process RocketLeagueProcess { get; set; }
 
@@ -42,7 +39,7 @@ namespace Rocket_League_Ranking_Tracker.Model
             if (RocketLeagueProcess != null)
             {
                 var memory = new Memory(RocketLeagueProcess);
-                IntPtr rankingAddr = memory.GetAddress(address);
+                IntPtr rankingAddr = memory.GetAddress(Address);
 
                 var ranking = memory.ReadInt32(rankingAddr);
                 Ranking = ranking;
@@ -56,16 +53,16 @@ namespace Rocket_League_Ranking_Tracker.Model
 
         private void UpdatePreviousRanking(int ranking)
         {
-            string query = "INSERT into " + table + "(Rank, Date) values (" + ranking + ", '" + DateTime.Now + "')";
-            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+            var query = $"INSERT into {Table} (Rank, Date) values ({ranking} , '{DateTime.Now}')";
+            var command = new SQLiteCommand(query, DbConnection);
             command.ExecuteNonQuery();
         }
 
         private int GetPreviousRanking()
         {
-            string query = "SELECT Rank FROM " + table + " ORDER BY Date DESC LIMIT 1";
-            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            string query = $"SELECT Rank FROM {Table} ORDER BY Date DESC LIMIT 1";
+            var command = new SQLiteCommand(query, DbConnection);
+            var reader = command.ExecuteReader();
             while (reader.Read())
             {
                 if ((int)reader["Rank"] != 0)

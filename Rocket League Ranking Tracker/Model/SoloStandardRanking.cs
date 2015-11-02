@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SQLite;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
@@ -11,8 +6,8 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public SoloStandardRanking(SQLiteConnection con) : base(con)
         {
-            address = "\"RocketLeague.exe\"+0150354C+7c+48+80+60+18c";
-            table = "SoloStandardRanking";
+            Address = "\"RocketLeague.exe\"+0150354C+7c+48+80+60+18c";
+            Table = "SoloStandardRanking";
         }
     }
 }

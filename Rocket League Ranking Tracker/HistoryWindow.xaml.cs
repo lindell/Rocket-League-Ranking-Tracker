@@ -14,7 +14,7 @@ namespace Rocket_League_Ranking_Tracker
     /// </summary>
     public partial class HistoryWindow : Window
     {
-        public string Title { get; set; }
+        public new string Title { get; set; }
         public ObservableCollection<KeyValuePair<long, int>> LineSeries { get; set; }
 
         readonly HistoryWindowControllerBase _controller;
@@ -77,7 +77,7 @@ namespace Rocket_League_Ranking_Tracker
 
         private void ExportAsCsvClick(object sender, RoutedEventArgs e)
         {
-            _controller.ExportAsCSV();
+            _controller.ExportAsCsv();
         }
 
         private void ApplyChangesButtonClick(object sender, RoutedEventArgs e)

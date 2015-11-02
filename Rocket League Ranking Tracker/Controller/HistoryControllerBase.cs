@@ -1,24 +1,19 @@
-﻿using Rocket_League_Ranking_Tracker.Model;
-using System;
+﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
     public abstract class HistoryWindowControllerBase
     {
-        protected ArrayList entriesToRemove;
-        protected ArrayList entriesToUpdate;
+        protected ArrayList EntriesToRemove;
+        protected ArrayList EntriesToUpdate;
 
         public ObservableCollection<TableStruct> Entries { get; set; }
 
         public abstract void ExportToExcel();
-        public abstract void ExportAsCSV();
+        public abstract void ExportAsCsv();
         public abstract void ApplyChanges();
         public abstract void DeleteItem(TableStruct itemToRemove);
 

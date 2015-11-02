@@ -2,24 +2,11 @@
 using Rocket_League_Ranking_Tracker.Model;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SQLite;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Rocket_League_Ranking_Tracker
 {
@@ -28,8 +15,8 @@ namespace Rocket_League_Ranking_Tracker
     /// </summary>
     public partial class MainWindow : Window
     {
-        private SQLiteConnection dbConnection;
-        private NotifyIcon notifyIcon;
+        private readonly SQLiteConnection _dbConnection;
+        private readonly NotifyIcon _notifyIcon;
         public MainWindow()
         {
             InitializeComponent();
@@ -39,16 +26,16 @@ namespace Rocket_League_Ranking_Tracker
 
             CreateDatabase(dbPath, connectionString);
             
-            dbConnection = new SQLiteConnection(connectionString);
-            dbConnection.Open();
+            _dbConnection = new SQLiteConnection(connectionString);
+            _dbConnection.Open();
             
-            RankingModel solo = new SoloRanking(dbConnection);
-            RankingModel doubles = new DoublesRanking(dbConnection);
-            RankingModel soloStandard = new SoloStandardRanking(dbConnection);
-            RankingModel standard = new StandardRanking(dbConnection);
-            Score scoreModel = new Score();
+            RankingModel solo = new SoloRanking(_dbConnection);
+            RankingModel doubles = new DoublesRanking(_dbConnection);
+            RankingModel soloStandard = new SoloStandardRanking(_dbConnection);
+            RankingModel standard = new StandardRanking(_dbConnection);
+            var scoreModel = new Score();
 
-            ProcessController pc = new ProcessController();
+            var pc = new ProcessController();
 
             pc.AddMemoryHandler(solo);
             pc.AddMemoryHandler(doubles);
@@ -63,11 +50,11 @@ namespace Rocket_League_Ranking_Tracker
             scores.DataContext = scoreModel;
             processInfo.DataContext = pc;
 
-            notifyIcon = new System.Windows.Forms.NotifyIcon();
+            _notifyIcon = new NotifyIcon();
             //TODO: Remove parent parent thingy
-            notifyIcon.Icon = new System.Drawing.Icon(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\logo.ico");
-            notifyIcon.Visible = true;
-            notifyIcon.Click +=
+            _notifyIcon.Icon = new System.Drawing.Icon(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\logo.ico");
+            _notifyIcon.Visible = true;
+            _notifyIcon.Click +=
                 delegate (object sender, EventArgs args)
                 {
                     this.Show();
@@ -82,13 +69,13 @@ namespace Rocket_League_Ranking_Tracker
             {
                 SQLiteConnection.CreateFile(path);
             }
-            SQLiteConnection dbConnection = new SQLiteConnection(connectionString);
+            var dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
-            ArrayList rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "SoloStandardRanking", "StandardRanking" });
+            var rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "SoloStandardRanking", "StandardRanking" });
             foreach(string table in rankingTables)
             {
-                string query = "create table if not exists " + table + " (Id INTEGER Primary Key, Rank int NOT NULL, Date DateTime NOT NULL); ";
-                SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+                var query = "create table if not exists " + table + " (Id INTEGER Primary Key, Rank int NOT NULL, Date DateTime NOT NULL); ";
+                var command = new SQLiteCommand(query, dbConnection);
                 command.ExecuteNonQuery();
             }
             dbConnection.Close();
@@ -96,35 +83,35 @@ namespace Rocket_League_Ranking_Tracker
 
         private void SoloRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloRanking") {Owner = this};
+            new HistoryWindow(_dbConnection, "SoloRanking") {Owner = this};
         }
 
         private void DualsRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "DualsRanking") { Owner = this };
+            new HistoryWindow(_dbConnection, "DualsRanking") { Owner = this };
         }
 
         private void SoloStandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "SoloStandardRanking") { Owner = this };
+            new HistoryWindow(_dbConnection, "SoloStandardRanking") { Owner = this };
         }
 
         private void StandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            HistoryWindow historyWindow = new HistoryWindow(dbConnection, "StandardRanking") { Owner = this };
+            new HistoryWindow(_dbConnection, "StandardRanking") { Owner = this };
         }
 
         protected override void OnStateChanged(EventArgs e)
         {
-            if (WindowState == System.Windows.WindowState.Minimized)
-                this.Hide();
+            if (WindowState == WindowState.Minimized)
+                Hide();
 
             base.OnStateChanged(e);
         }
 
         public void OnWindowClosing(object sender, CancelEventArgs e)
         {
-            notifyIcon.Visible = false;
+            _notifyIcon.Visible = false;
         }
     }
 }
