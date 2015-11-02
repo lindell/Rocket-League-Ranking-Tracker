@@ -21,7 +21,7 @@ namespace Rocket_League_Ranking_Tracker
         {
             InitializeComponent();
             //TODO: Remove parent parent thingy
-            string dbPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\Data\database.db";
+            string dbPath = @"database.db";
             string connectionString = @"Data Source =" + dbPath + ";Version=3;";
 
             CreateDatabase(dbPath, connectionString);

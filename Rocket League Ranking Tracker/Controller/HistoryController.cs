@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Collections;
+using System.Data.Common;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -64,17 +65,32 @@ namespace Rocket_League_Ranking_Tracker.Controller
 
         private void EntryChanged(object sender, PropertyChangedEventArgs e)
         {
-            EntriesToUpdate.Add((TableStruct)sender);
+            var entry = sender as TableStruct;
+            if (entry == null) return;
+            if (EntryExists(entry.Id))
+            {
+                var query = $"UPDATE {_table} SET Rank = {entry.Rank} , Date = '{entry.Date}' WHERE Id = {entry.Id};";
+                var command = new SQLiteCommand(query, _dbConnection);
+                command.ExecuteNonQuery();
+            }
+        }
+
+        private bool EntryExists(long id)
+        {
+            var query = $"SELECT EXISTS(SELECT 1 FROM {_table} WHERE Id = {id} LIMIT 1)";
+            var command = new SQLiteCommand(query, _dbConnection);
+            var reader = command.ExecuteReader();
+            return reader.HasRows;
         }
 
 
         public override void ExportAsCsv()
         {
-            string csvString = "Id,Ranking,Date\n";
+            var csvString = "Id,Ranking,Date\n";
 
-            string query = "SELECT * FROM " + _table;
-            SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var query = "SELECT * FROM " + _table;
+            var command = new SQLiteCommand(query, _dbConnection);
+            var reader = command.ExecuteReader();
 
             while (reader.Read())
             {
@@ -100,7 +116,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 //Get Filestream
                 try
                 {
-                    FileStream fs = (System.IO.FileStream)csvFileDialog.OpenFile();
+                    FileStream fs = (FileStream)csvFileDialog.OpenFile();
 
                     //Write to file
                     fs.Write(uniEncoding.GetBytes(csvString), 0, uniEncoding.GetByteCount(csvString));
@@ -114,30 +130,11 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
         }
 
-        public override void ApplyChanges()
-        {
-            foreach (TableStruct entry in EntriesToUpdate)
-            {
-                string query = string.Format("UPDATE {0} SET Rank = {1} , Date = '{2}' WHERE Id = {3};", _table, entry.Rank, entry.Date, entry.Id);
-                SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
-                command.ExecuteNonQuery();
-
-            }
-            EntriesToUpdate.Clear();
-
-            foreach (TableStruct entry in EntriesToRemove)
-            {
-                string query = " DELETE FROM " + _table + " WHERE Id = " + entry.Id + ";";
-                SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
-                command.ExecuteNonQuery();
-            }
-            EntriesToRemove.Clear();
-        }
-
         public override void DeleteItem(TableStruct itemToRemove)
         {
-            EntriesToRemove.Add(itemToRemove);
-            Entries.Remove(itemToRemove);
+            var query = $"DELETE FROM {_table} WHERE Id = {itemToRemove.Id};";
+            var command = new SQLiteCommand(query, _dbConnection);
+            command.ExecuteNonQuery();
         }
     }
 }

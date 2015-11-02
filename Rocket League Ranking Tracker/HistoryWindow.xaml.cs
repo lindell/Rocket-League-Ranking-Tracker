@@ -16,6 +16,7 @@ namespace Rocket_League_Ranking_Tracker
     {
         public new string Title { get; set; }
         public ObservableCollection<KeyValuePair<long, int>> LineSeries { get; set; }
+        //public ObservableCollection<HistoryWindowControllerBase.TableStruct> Entries { get; set; } 
 
         readonly HistoryWindowControllerBase _controller;
         string Table { get; set; }
@@ -24,6 +25,9 @@ namespace Rocket_League_Ranking_Tracker
             InitializeComponent();
             Table = table;
             _controller = new HistoryWindowController(dbConnection, table);
+
+            //Entries = _controller.Entries;
+            
             LineSeries = new ObservableCollection<KeyValuePair<long, int>>();
 
             foreach (HistoryWindowControllerBase.TableStruct tableStruct in _controller.Entries)
@@ -32,7 +36,7 @@ namespace Rocket_League_Ranking_Tracker
                 LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
                 tableStruct.PropertyChanged += TableEntryChanged;
             }
-            //var dataSourceList = new List<List<KeyValuePair<string, int>>>();
+
             //TODO: Fix bindings in xaml to not use datasourcelist as it does now
             var dataSourceList = new List<object>();
             dataSourceList.Add(LineSeries);
@@ -40,15 +44,12 @@ namespace Rocket_League_Ranking_Tracker
             LineChart.DataContext = dataSourceList;
             RankHistoryDataGrid.ItemsSource = _controller.Entries;
             _controller.Entries.CollectionChanged += EntriesUpdated;
-            //this.Width = 50 * tmp.Count;
             Show();
         }
 
         private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
             LineSeries.Clear();
-
-
             foreach (var tableStruct in _controller.Entries)
             {
                 LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
@@ -73,11 +74,6 @@ namespace Rocket_League_Ranking_Tracker
         private void ExportAsCsvClick(object sender, RoutedEventArgs e)
         {
             _controller.ExportAsCsv();
-        }
-
-        private void ApplyChangesButtonClick(object sender, RoutedEventArgs e)
-        {
-            _controller.ApplyChanges();
         }
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)

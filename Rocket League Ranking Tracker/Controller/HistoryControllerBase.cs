@@ -13,7 +13,6 @@ namespace Rocket_League_Ranking_Tracker.Controller
         public ObservableCollection<TableStruct> Entries { get; set; }
 
         public abstract void ExportAsCsv();
-        public abstract void ApplyChanges();
         public abstract void DeleteItem(TableStruct itemToRemove);
 
         public class TableStruct : INotifyPropertyChanged
