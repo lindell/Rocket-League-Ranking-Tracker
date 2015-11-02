@@ -12,7 +12,7 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public StandardRanking(SQLiteConnection con) : base(con)
         {
-            address = "\"RocketLeague.exe\"+015034C4+228+80+70+18c";
+            address = "\"RocketLeague.exe\"+0150354C+7c+48+80+70+18c";
             table = "StandardRanking";
         }
     }
