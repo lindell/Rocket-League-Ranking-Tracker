@@ -46,7 +46,8 @@ namespace Rocket_League_Ranking_Tracker.Model
 
                 var ranking = memory.ReadInt32(rankingAddr);
                 Ranking = ranking;
-                if(ranking != GetPreviousRanking() && ranking != 50 && ranking !=0)
+                if(ranking != GetPreviousRanking() && ranking != 50 && ranking !=0 && ranking > 0 && ranking < 2000)
+                    //TODO: remove magic constants
                 {
                     UpdatePreviousRanking(ranking);
                 }
