@@ -37,8 +37,8 @@ namespace Rocket_League_Ranking_Tracker
             var dataSourceList = new List<object>();
             dataSourceList.Add(LineSeries);
             dataSourceList.Add(table);
-            lineChart.DataContext = dataSourceList;
-            rankHistoryDataGrid.ItemsSource = _controller.Entries;
+            LineChart.DataContext = dataSourceList;
+            RankHistoryDataGrid.ItemsSource = _controller.Entries;
             _controller.Entries.CollectionChanged += EntriesUpdated;
             //this.Width = 50 * tmp.Count;
             Show();
@@ -67,7 +67,7 @@ namespace Rocket_League_Ranking_Tracker
                     LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
                 }
             }
-            lineChart.DataContext = lineChart.DataContext;
+            LineChart.DataContext = LineChart.DataContext;
         }
 
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
@@ -87,7 +87,7 @@ namespace Rocket_League_Ranking_Tracker
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)
         {
-            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)rankHistoryDataGrid.SelectedItem);
+            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankHistoryDataGrid.SelectedItem);
         }
 
     }
