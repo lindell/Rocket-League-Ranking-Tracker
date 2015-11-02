@@ -19,7 +19,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
         public HistoryWindowController(SQLiteConnection dbConnection, string table)
         {
             _dbConnection = dbConnection;
-            dbConnection.Update += DatabaseUpdated;
+            _dbConnection.Update += DatabaseUpdated;
             _table = table;
             Entries = new ObservableCollection<TableStruct>();
             EntriesToRemove = new ArrayList();
@@ -28,14 +28,14 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var query = "SELECT * FROM " + table;
             var command = new SQLiteCommand(query, dbConnection);
             var reader = command.ExecuteReader();
-            
+
             //Fill entry list with entries to be shown 
             while (reader.Read())
             {
                 var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
                 entry.PropertyChanged += EntryChanged;
                 Entries.Add(entry);
-            }  
+            }
         }
 
         private void DatabaseUpdated(object sender, UpdateEventArgs e)

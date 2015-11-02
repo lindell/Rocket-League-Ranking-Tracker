@@ -9,18 +9,27 @@
     <Grid>
         <Grid>
             <DockPanel LastChildFill="True">
-
-                <DataGrid  x:Name="RankHistoryDataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="10, 10, 10, 40" DockPanel.Dock="Left" MinWidth="200" CanUserAddRows="False" CanUserResizeColumns="False" ItemsSource="{Binding Entries}">
-                    
-                        <DataGrid.ContextMenu>
+                <DataGrid  x:Name="RankHistoryDataGrid" 
+                           HorizontalAlignment="Stretch" 
+                           VerticalAlignment="Stretch"  
+                           Margin="10, 10, 10, 40" 
+                           DockPanel.Dock="Left" 
+                           MinWidth="220"
+                           CanUserAddRows="False"
+                           CanUserResizeColumns="False"
+                           AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Width="25" Binding="{Binding Id}" />
+                        <DataGridTextColumn Header="Rank" Width="40" Binding="{Binding Rank}" />
+                        <DataGridTextColumn Header="Date" Width="153" Binding="{Binding Date}" />
+                    </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete" Click="DeleteItemClick"/>
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>
-
                 <chartingToolkit:Chart Name="LineChart" Title="Ranking" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,10,10,40" MaxWidth="1500" DockPanel.Dock="Right">
-
                     <chartingToolkit:LineSeries 
                                                     Title="{Binding [1]}"
                                                     DependentValuePath="Value" 
@@ -35,6 +44,4 @@
             <Button Content="Export as CSV" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Width="90" Click="ExportAsCsvClick"/>
         </Grid>
     </Grid>
-
-
 </Window>
