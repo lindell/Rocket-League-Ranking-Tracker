@@ -34,7 +34,6 @@
 
         </Grid>
         <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <Button Content="Export to Excel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,200,10" Width="90" Click="ExportToExcelButonClick"/>
             <Button Content="Export as CSV" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,105,10" Width="90" Click="ExportAsCsvClick"/>
             <Button Content="Apply Changes" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Width="90" Click="ApplyChangesButtonClick"/>
         </Grid>

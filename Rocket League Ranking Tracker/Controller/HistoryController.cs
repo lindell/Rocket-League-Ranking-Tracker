@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
 using System.Data.SQLite;
 using System.Windows;
@@ -68,74 +67,6 @@ namespace Rocket_League_Ranking_Tracker.Controller
             EntriesToUpdate.Add((TableStruct)sender);
         }
 
-        public override void ExportToExcel()
-        {
-            //Start excel app
-            Excel.Application excelApp;
-            try
-            {
-                excelApp = new Excel.Application();
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Problem launching Excel. Make sure excel is installed properly and try again.", "Error", new MessageBoxButton(), MessageBoxImage.Error);
-                return;
-            }
-
-            excelApp.Workbooks.Add();
-
-            Excel._Worksheet workSheet = (Excel.Worksheet)excelApp.ActiveSheet;
-            //Initiate appearance of workbook
-            var row = 1;
-            workSheet.Cells[row, "A"] = _table;
-            workSheet.Cells[row, "A"].Font.Bold = true;
-            row++;
-            workSheet.Cells[row, "A"] = "Id";
-            workSheet.Cells[row, "B"] = "Rank";
-            workSheet.Cells[row, "C"] = "Date";
-
-            // Read from database
-            string query = "SELECT * FROM " + _table;
-            SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                //Insert into excel workbook
-                row++;
-                var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
-                workSheet.Cells[row, "A"] = entry.Id;
-                workSheet.Cells[row, "B"] = entry.Rank;
-                workSheet.Cells[row, "C"] = entry.Date;
-            }
-            workSheet.Columns.AutoFit();
-
-            // Add chart.
-            var charts = workSheet.ChartObjects() as
-                Microsoft.Office.Interop.Excel.ChartObjects;
-            var chartObject = charts.Add(250, 10, 300, 300) as
-                Microsoft.Office.Interop.Excel.ChartObject;
-            var chart = chartObject.Chart;
-
-            var dataRange = workSheet.get_Range("B3", "B" + row);
-
-            // Set chart range.
-
-            // Set chart properties.
-            chart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers;
-            chart.ChartWizard(Source: dataRange,
-                Title: _table,
-                CategoryTitle: "Dates",
-                ValueTitle: "Rank");
-            chart.SeriesCollection(1).XValues = workSheet.Range["C3", "C" + row];
-            chart.SeriesCollection(1).Name = _table;
-            //((Excel.Axis)chart.Axes(Excel.XlAxisGroup.xlSecondary)).Type = Excel.XlAxisType.xlCategory;
-            Excel.Axis axis = (Excel.Axis)chart.Axes(
-                    Excel.XlAxisType.xlSeriesAxis,
-                    Excel.XlAxisGroup.xlSecondary);
-            chart.ChartArea.Left = 250;
-            chart.ChartArea.Width = 100 + row * 20;
-            excelApp.Visible = true;
-        }
 
         public override void ExportAsCsv()
         {

@@ -70,11 +70,6 @@ namespace Rocket_League_Ranking_Tracker
             LineChart.DataContext = LineChart.DataContext;
         }
 
-        private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
-        {
-            _controller.ExportToExcel();
-        }
-
         private void ExportAsCsvClick(object sender, RoutedEventArgs e)
         {
             _controller.ExportAsCsv();
