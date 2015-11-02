@@ -49,17 +49,19 @@ namespace Rocket_League_Ranking_Tracker
         private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
             LineSeries.Clear();
-            var index = 1;
-            foreach (var tableStruct in _controller.Entries)
-            {
-                tableStruct.ViewId = index;
-                index ++;
-            }
             foreach (var tableStruct in _controller.Entries)
             {
                 LineSeries.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
                 //tableStruct.PropertyChanged += TableEntryChanged;
             }
+            var index = 1;
+            foreach (var tableStruct in _controller.Entries)
+            {
+                tableStruct.ViewId = index;
+                index++;
+
+            }
+            RankHistoryDataGrid.Items.Refresh();
         }
 
         private void TableEntryChanged(object sender, PropertyChangedEventArgs e)
