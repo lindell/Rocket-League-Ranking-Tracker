@@ -19,7 +19,7 @@
                            CanUserResizeColumns="False"
                            AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Width="25" Binding="{Binding Id}" />
+                        <DataGridTextColumn Header="Id" Width="25" IsReadOnly="True" Binding="{Binding Id}" />
                         <DataGridTextColumn Header="Rank" Width="40" Binding="{Binding Rank}" />
                         <DataGridTextColumn Header="Date" Width="153" Binding="{Binding Date}" />
                     </DataGrid.Columns>
