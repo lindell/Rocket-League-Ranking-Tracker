@@ -28,11 +28,12 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var query = "SELECT * FROM " + table;
             var command = new SQLiteCommand(query, dbConnection);
             var reader = command.ExecuteReader();
-
+            var index = 1;
             //Fill entry list with entries to be shown 
             while (reader.Read())
             {
-                var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                var entry = new TableStruct() { Id = (long)reader["Id"], ViewId = index, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                index++;
                 entry.PropertyChanged += EntryChanged;
                 Entries.Add(entry);
             }
@@ -51,6 +52,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 var entry = new TableStruct()
                 {
                     Id = (long) reader["Id"],
+                    ViewId = Entries.Count+1,
                     Rank = (int) reader["Rank"],
                     Date = (DateTime) reader["Date"]
                 };
@@ -135,6 +137,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var query = $"DELETE FROM {_table} WHERE Id = {itemToRemove.Id};";
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
+            Entries.Remove(itemToRemove);
         }
     }
 }

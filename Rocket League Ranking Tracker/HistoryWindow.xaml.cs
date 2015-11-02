@@ -15,7 +15,7 @@ namespace Rocket_League_Ranking_Tracker
     public partial class HistoryWindow : Window
     {
         public new string Title { get; set; }
-        public ObservableCollection<KeyValuePair<long, int>> LineSeries { get; set; }
+        public ObservableCollection<KeyValuePair<int, int>> LineSeries { get; set; }
         //public ObservableCollection<HistoryWindowControllerBase.TableStruct> Entries { get; set; } 
 
         readonly HistoryWindowControllerBase _controller;
@@ -28,12 +28,11 @@ namespace Rocket_League_Ranking_Tracker
 
             //Entries = _controller.Entries;
             
-            LineSeries = new ObservableCollection<KeyValuePair<long, int>>();
+            LineSeries = new ObservableCollection<KeyValuePair<int, int>>();
 
             foreach (HistoryWindowControllerBase.TableStruct tableStruct in _controller.Entries)
             {
-                //var tmp = new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank);
-                LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
+                LineSeries.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
                 tableStruct.PropertyChanged += TableEntryChanged;
             }
 
@@ -50,22 +49,28 @@ namespace Rocket_League_Ranking_Tracker
         private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
             LineSeries.Clear();
+            var index = 1;
             foreach (var tableStruct in _controller.Entries)
             {
-                LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
-                tableStruct.PropertyChanged += TableEntryChanged;
+                tableStruct.ViewId = index;
+                index ++;
+            }
+            foreach (var tableStruct in _controller.Entries)
+            {
+                LineSeries.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
+                //tableStruct.PropertyChanged += TableEntryChanged;
             }
         }
 
         private void TableEntryChanged(object sender, PropertyChangedEventArgs e)
         {
             var tableStruct = (HistoryWindowControllerBase.TableStruct)sender;
-            foreach (KeyValuePair<long, int> pair in LineSeries.ToList())
+            foreach (KeyValuePair<int, int> pair in LineSeries.ToList())
             {
-                if (pair.Key.Equals(tableStruct.Id))
+                if (pair.Key.Equals(tableStruct.ViewId))
                 {
                     LineSeries.Remove(pair);
-                    LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
+                    LineSeries.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
                 }
             }
             LineChart.DataContext = LineChart.DataContext;
