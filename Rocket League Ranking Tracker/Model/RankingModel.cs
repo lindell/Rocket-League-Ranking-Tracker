@@ -6,7 +6,7 @@ using System.Data.SQLite;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
-    class RankingModel : INotifyPropertyChanged, MemoryHandler
+    class RankingModel : INotifyPropertyChanged, IMemoryHandler
     {
         protected string Address = "";
         protected string Table = "";
