@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
 using System.Data.SQLite;
@@ -11,26 +8,26 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Collections;
-using Rocket_League_Ranking_Tracker.Model;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
     class HistoryWindowController: HistoryWindowControllerBase
     {
-        private SQLiteConnection dbConnection;
-        private string table;
+        private readonly SQLiteConnection _dbConnection;
+        private readonly string _table;
 
         public HistoryWindowController(SQLiteConnection dbConnection, string table)
         {
-            this.dbConnection = dbConnection;
-            this.table = table;
+            _dbConnection = dbConnection;
+            dbConnection.Update += DatabaseUpdated;
+            _table = table;
             Entries = new ObservableCollection<TableStruct>();
             entriesToRemove = new ArrayList();
             entriesToUpdate = new ArrayList();
 
-            string query = "SELECT * FROM " + table;
-            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var query = "SELECT * FROM " + table;
+            var command = new SQLiteCommand(query, dbConnection);
+            var reader = command.ExecuteReader();
             
             //Fill entry list with entries to be shown 
             while (reader.Read())
@@ -38,9 +35,33 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 var entry = new TableStruct() { Id = (long)reader["Id"], Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
                 entry.PropertyChanged += EntryChanged;
                 Entries.Add(entry);
-            }
-            
+            }  
         }
+
+        private void DatabaseUpdated(object sender, UpdateEventArgs e)
+        {
+            if (!e.Event.Equals(UpdateEventType.Insert)) return;
+            var query = $"SELECT * FROM {_table} WHERE Id={(int) e.RowId}";
+            var command = new SQLiteCommand(query, _dbConnection);
+            var reader = command.ExecuteReader();
+
+            //Fill entry list with entries to be shown 
+            while (reader.Read())
+            {
+                var entry = new TableStruct()
+                {
+                    Id = (long) reader["Id"],
+                    Rank = (int) reader["Rank"],
+                    Date = (DateTime) reader["Date"]
+                };
+                entry.PropertyChanged += EntryChanged;
+                Application.Current.Dispatcher.Invoke(delegate
+                {
+                    Entries.Add(entry);
+                });
+            }
+        }
+
 
         private void EntryChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -57,7 +78,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
             catch (Exception)
             {
-                System.Windows.MessageBox.Show("Problem launching Excel. Make sure excel is installed properly and try again.", "Error", new MessageBoxButton(), MessageBoxImage.Error);
+                MessageBox.Show("Problem launching Excel. Make sure excel is installed properly and try again.", "Error", new MessageBoxButton(), MessageBoxImage.Error);
                 return;
             }
 
@@ -66,7 +87,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             Excel._Worksheet workSheet = (Excel.Worksheet)excelApp.ActiveSheet;
             //Initiate appearance of workbook
             var row = 1;
-            workSheet.Cells[row, "A"] = table;
+            workSheet.Cells[row, "A"] = _table;
             workSheet.Cells[row, "A"].Font.Bold = true;
             row++;
             workSheet.Cells[row, "A"] = "Id";
@@ -74,8 +95,8 @@ namespace Rocket_League_Ranking_Tracker.Controller
             workSheet.Cells[row, "C"] = "Date";
 
             // Read from database
-            string query = "SELECT * FROM " + table;
-            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+            string query = "SELECT * FROM " + _table;
+            SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -102,11 +123,11 @@ namespace Rocket_League_Ranking_Tracker.Controller
             // Set chart properties.
             chart.ChartType = Microsoft.Office.Interop.Excel.XlChartType.xlLineMarkers;
             chart.ChartWizard(Source: dataRange,
-                Title: table,
+                Title: _table,
                 CategoryTitle: "Dates",
                 ValueTitle: "Rank");
             chart.SeriesCollection(1).XValues = workSheet.Range["C3", "C" + row];
-            chart.SeriesCollection(1).Name = table;
+            chart.SeriesCollection(1).Name = _table;
             //((Excel.Axis)chart.Axes(Excel.XlAxisGroup.xlSecondary)).Type = Excel.XlAxisType.xlCategory;
             Excel.Axis axis = (Excel.Axis)chart.Axes(
                     Excel.XlAxisType.xlSeriesAxis,
@@ -120,8 +141,8 @@ namespace Rocket_League_Ranking_Tracker.Controller
         {
             string csvString = "Id,Ranking,Date\n";
 
-            string query = "SELECT * FROM " + table;
-            SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+            string query = "SELECT * FROM " + _table;
+            SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
             SQLiteDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -166,8 +187,8 @@ namespace Rocket_League_Ranking_Tracker.Controller
         {
             foreach (TableStruct entry in entriesToUpdate)
             {
-                string query = string.Format("UPDATE {0} SET Rank = {1} , Date = '{2}' WHERE Id = {3};", table, entry.Rank, entry.Date, entry.Id);
-                SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+                string query = string.Format("UPDATE {0} SET Rank = {1} , Date = '{2}' WHERE Id = {3};", _table, entry.Rank, entry.Date, entry.Id);
+                SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
                 command.ExecuteNonQuery();
 
             }
@@ -175,8 +196,8 @@ namespace Rocket_League_Ranking_Tracker.Controller
 
             foreach (TableStruct entry in entriesToRemove)
             {
-                string query = " DELETE FROM " + table + " WHERE Id = " + entry.Id + ";";
-                SQLiteCommand command = new SQLiteCommand(query, dbConnection);
+                string query = " DELETE FROM " + _table + " WHERE Id = " + entry.Id + ";";
+                SQLiteCommand command = new SQLiteCommand(query, _dbConnection);
                 command.ExecuteNonQuery();
             }
             entriesToRemove.Clear();

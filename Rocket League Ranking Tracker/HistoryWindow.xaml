@@ -3,15 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Rocket_League_Ranking_Tracker"
-        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="Rocket_League_Ranking_Tracker.HistoryWindow"
+    xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="Rocket_League_Ranking_Tracker.HistoryWindow"
         mc:Ignorable="d"
-        Title="History" SizeToContent="Width" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Height="487.211" Width="714.761">
+        Title="History" SizeToContent="Width" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Height="500" Width="1000" MinWidth ="1000">
     <Grid>
         <Grid>
             <DockPanel LastChildFill="True">
                 
-                <DataGrid  x:Name="rankHistoryDataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="10, 10, 10, 40" DockPanel.Dock="Left">
+                <DataGrid  x:Name="RankHistoryDataGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Margin="10, 10, 10, 40" DockPanel.Dock="Left" MinWidth="220">
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Delete" Click="DeleteItemClick"/>
@@ -19,14 +18,15 @@
                     </DataGrid.ContextMenu>
                 </DataGrid>
                 <!--<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Column="2">-->
-                <chartingToolkit:Chart Name="lineChart" Title="Ranking" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,10,10,40" MaxWidth="1500" DockPanel.Dock="Right">
-                        <chartingToolkit:LineSeries             
-                                                            Title="{Binding [1]}"
-                                                            DependentValuePath="Value" 
-                                                            IndependentValuePath="Key"
-                                                            ItemsSource="{Binding [0]}"
-                                                            IsSelectionEnabled="True"/>
-
+                <chartingToolkit:Chart Name="LineChart" Title="Ranking" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10,10,10,40" MaxWidth="1500" DockPanel.Dock="Right">
+                    
+                        <chartingToolkit:LineSeries 
+                                                    Title="{Binding [1]}"
+                                                    DependentValuePath="Value" 
+                                                    IndependentValuePath="Key"
+                                                    ItemsSource="{Binding [0]}"
+                                                    IsSelectionEnabled="True"
+                                                    />
                     </chartingToolkit:Chart>
                 <!--</Grid>-->
             </DockPanel>

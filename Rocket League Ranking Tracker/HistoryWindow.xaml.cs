@@ -1,26 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Microsoft.Win32;
 using Rocket_League_Ranking_Tracker.Controller;
 using System.Data.SQLite;
-using Rocket_League_Ranking_Tracker.Model;
-using Charting = System.Windows.Controls.DataVisualization.Charting;
 
 namespace Rocket_League_Ranking_Tracker
 {
@@ -29,50 +14,80 @@ namespace Rocket_League_Ranking_Tracker
     /// </summary>
     public partial class HistoryWindow : Window
     {
+        public string Title { get; set; }
+        public ObservableCollection<KeyValuePair<long, int>> LineSeries { get; set; }
 
-        HistoryWindowControllerBase controller;
+        readonly HistoryWindowControllerBase _controller;
         string Table { get; set; }
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
-            this.Table = table;
-            controller = new HistoryWindowController(dbConnection, table);
-            List<KeyValuePair<string, int>> tmp = new List<KeyValuePair<string, int>>();
+            Table = table;
+            _controller = new HistoryWindowController(dbConnection, table);
+            LineSeries = new ObservableCollection<KeyValuePair<long, int>>();
 
-            foreach (HistoryWindowControllerBase.TableStruct tableStruct in controller.Entries)
+            foreach (HistoryWindowControllerBase.TableStruct tableStruct in _controller.Entries)
             {
-                tmp.Add(new KeyValuePair<string, int>(tableStruct.Date.ToString(), tableStruct.Rank));
+                //var tmp = new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank);
+                LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
+                tableStruct.PropertyChanged += TableEntryChanged;
             }
             //var dataSourceList = new List<List<KeyValuePair<string, int>>>();
             //TODO: Fix bindings in xaml to not use datasourcelist as it does now
             var dataSourceList = new List<object>();
-            dataSourceList.Add(tmp);
+            dataSourceList.Add(LineSeries);
             dataSourceList.Add(table);
             lineChart.DataContext = dataSourceList;
-            rankHistoryDataGrid.ItemsSource = controller.Entries;
+            rankHistoryDataGrid.ItemsSource = _controller.Entries;
+            _controller.Entries.CollectionChanged += EntriesUpdated;
             //this.Width = 50 * tmp.Count;
             Show();
+        }
 
+        private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            LineSeries.Clear();
+
+
+            foreach (var tableStruct in _controller.Entries)
+            {
+                LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
+                tableStruct.PropertyChanged += TableEntryChanged;
+            }
+        }
+
+        private void TableEntryChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var tableStruct = (HistoryWindowControllerBase.TableStruct)sender;
+            foreach (KeyValuePair<long, int> pair in LineSeries.ToList())
+            {
+                if (pair.Key.Equals(tableStruct.Id))
+                {
+                    LineSeries.Remove(pair);
+                    LineSeries.Add(new KeyValuePair<long, int>(tableStruct.Id, tableStruct.Rank));
+                }
+            }
+            lineChart.DataContext = lineChart.DataContext;
         }
 
         private void ExportToExcelButonClick(object sender, RoutedEventArgs e)
         {
-            controller.ExportToExcel();
+            _controller.ExportToExcel();
         }
 
         private void ExportAsCsvClick(object sender, RoutedEventArgs e)
         {
-            controller.ExportAsCSV();
+            _controller.ExportAsCSV();
         }
 
         private void ApplyChangesButtonClick(object sender, RoutedEventArgs e)
         {
-            controller.ApplyChanges();
+            _controller.ApplyChanges();
         }
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)
         {
-            controller.DeleteItem((HistoryWindowControllerBase.TableStruct)rankHistoryDataGrid.SelectedItem);
+            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)rankHistoryDataGrid.SelectedItem);
         }
 
     }
