@@ -7,7 +7,16 @@ using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.Common;
+using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Controls.DataVisualization.Charting;
+using System.Windows.Forms.DataVisualization.Charting;
+using Microsoft.Windows.Controls;
+using Chart = System.Windows.Controls.DataVisualization.Charting.Chart;
+using DataGrid = System.Windows.Controls.DataGrid;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -15,12 +24,18 @@ namespace Rocket_League_Ranking_Tracker.Controller
     {
         private readonly SQLiteConnection _dbConnection;
         private readonly string _table;
+        private Chart _lineChart;
+        private DataGrid _datagrid;
+        private LineChartDataContext LineChartContext;
 
-        public HistoryWindowController(SQLiteConnection dbConnection, string table)
+
+        public HistoryWindowController(SQLiteConnection dbConnection, string table, Chart lineChart, DataGrid dataGrid)
         {
             _dbConnection = dbConnection;
             _dbConnection.Update += DatabaseUpdated;
             _table = table;
+            _lineChart = lineChart;
+            _datagrid = dataGrid;
             Entries = new ObservableCollection<TableStruct>();
             EntriesToRemove = new ArrayList();
             EntriesToUpdate = new ArrayList();
@@ -37,7 +52,62 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 entry.PropertyChanged += EntryChanged;
                 Entries.Add(entry);
             }
+
+            LineChartContext = new LineChartDataContext()
+            {
+                LineSeriesData = new ObservableCollection<KeyValuePair<int, int>>(),
+                Title = table
+            };
+
+            foreach (HistoryWindowControllerBase.TableStruct tableStruct in Entries)
+            {
+                LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
+                tableStruct.PropertyChanged += TableEntryChanged;
+            }
+            Entries.CollectionChanged += EntriesUpdated;
+            _lineChart.DataContext = LineChartContext;
+            _datagrid.ItemsSource = Entries;
+            _datagrid.SelectionChanged += TableSelectionChanged;
         }
+
+        private void TableSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ((LineSeries)_lineChart.Series[0]).SelectedItem =
+                LineChartContext.LineSeriesData[((HistoryWindowControllerBase.TableStruct)_datagrid.SelectedItem).ViewId - 1];
+        }
+
+
+        private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            LineChartContext.LineSeriesData.Clear();
+            foreach (var tableStruct in Entries)
+            {
+                LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
+                //tableStruct.PropertyChanged += TableEntryChanged;
+            }
+            var index = 1;
+            foreach (var tableStruct in Entries)
+            {
+                tableStruct.ViewId = index;
+                index++;
+            }
+            _datagrid.Items.Refresh();
+        }
+
+        private void TableEntryChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var tableStruct = (HistoryWindowControllerBase.TableStruct)sender;
+            foreach (KeyValuePair<int, int> pair in LineChartContext.LineSeriesData.ToList())
+            {
+                if (pair.Key.Equals(tableStruct.ViewId))
+                {
+                    LineChartContext.LineSeriesData.Remove(pair);
+                    LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
+                }
+            }
+            _lineChart.DataContext = _lineChart.DataContext;
+        }
+
 
         private void DatabaseUpdated(object sender, UpdateEventArgs e)
         {
@@ -138,6 +208,12 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
             Entries.Remove(itemToRemove);
+        }
+
+        private class LineChartDataContext
+        {
+            public ObservableCollection<KeyValuePair<int, int>> LineSeriesData { get; set; }
+            public string Title { get; set; }
         }
     }
 }

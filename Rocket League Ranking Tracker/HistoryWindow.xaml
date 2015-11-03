@@ -3,13 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="Rocket_League_Ranking_Tracker.HistoryWindow"
+    xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+    xmlns:charting="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
+    x:Class="Rocket_League_Ranking_Tracker.HistoryWindow"
         mc:Ignorable="d"
         Title="History" SizeToContent="Width" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" Height="500" Width="1000" MinWidth ="1000">
     <Grid>
         <Grid>
             <DockPanel LastChildFill="True">
-                <DataGrid  x:Name="RankHistoryDataGrid" 
+                <DataGrid  x:Name="RankDataGrid" 
                            HorizontalAlignment="Stretch" 
                            VerticalAlignment="Stretch"  
                            Margin="10, 10, 10, 40" 
@@ -36,15 +38,48 @@
                                        Margin="10,10,10,40" 
                                        MaxWidth="1500" 
                                        DockPanel.Dock="Right">
-                    <chartingToolkit:LineSeries 
-                                            Title="{Binding [1]}"
+
+                        <chartingToolkit:LineSeries 
+                                            Name="LineSeries"
+                                            Title="{Binding Title}"
                                             DependentValuePath="Value" 
                                             IndependentValuePath="Key"
-                                            ItemsSource="{Binding [0]}"
-                                            IsSelectionEnabled="True"/>
+                                            ItemsSource="{Binding LineSeriesData}"
+                                            IsSelectionEnabled="True"
+                                            
+                                            >
+                        <chartingToolkit:LineSeries.DataPointStyle>
+                            <Style TargetType="chartingToolkit:LineDataPoint">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Setter Property="Background" Value="DodgerBlue"/>
+                                <Setter Property="BitmapEffect">
+                                    <Setter.Value>
+                                        <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
+                                    </Setter.Value>
+                                </Setter>
+
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BitmapEffect">
+                                            <Setter.Value>
+                                                <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Background" Value="Red"/>
+
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+
+                        </chartingToolkit:LineSeries.DataPointStyle>
+
+
+                    </chartingToolkit:LineSeries>
+
                     <chartingToolkit:Chart.Axes>
                         <chartingToolkit:LinearAxis Location="Top" Orientation="X"/>
                     </chartingToolkit:Chart.Axes>
+                    
                 </chartingToolkit:Chart>
             </DockPanel>
         </Grid>

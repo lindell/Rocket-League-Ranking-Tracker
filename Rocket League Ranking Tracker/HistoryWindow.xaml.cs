@@ -6,6 +6,11 @@ using System.Linq;
 using System.Windows;
 using Rocket_League_Ranking_Tracker.Controller;
 using System.Data.SQLite;
+using System.Windows.Controls;
+using System.Windows.Controls.DataVisualization.Charting;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Media.Effects;
 
 namespace Rocket_League_Ranking_Tracker
 {
@@ -15,67 +20,14 @@ namespace Rocket_League_Ranking_Tracker
     public partial class HistoryWindow : Window
     {
         public new string Title { get; set; }
-        public ObservableCollection<KeyValuePair<int, int>> LineSeries { get; set; }
-        //public ObservableCollection<HistoryWindowControllerBase.TableStruct> Entries { get; set; } 
 
         readonly HistoryWindowControllerBase _controller;
-        string Table { get; set; }
+
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
-            Table = table;
-            _controller = new HistoryWindowController(dbConnection, table);
-
-            //Entries = _controller.Entries;
-            
-            LineSeries = new ObservableCollection<KeyValuePair<int, int>>();
-
-            foreach (HistoryWindowControllerBase.TableStruct tableStruct in _controller.Entries)
-            {
-                LineSeries.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
-                tableStruct.PropertyChanged += TableEntryChanged;
-            }
-
-            //TODO: Fix bindings in xaml to not use datasourcelist as it does now
-            var dataSourceList = new List<object>();
-            dataSourceList.Add(LineSeries);
-            dataSourceList.Add(table);
-            LineChart.DataContext = dataSourceList;
-            RankHistoryDataGrid.ItemsSource = _controller.Entries;
-            _controller.Entries.CollectionChanged += EntriesUpdated;
+            _controller = new HistoryWindowController(dbConnection, table, LineChart, RankDataGrid);
             Show();
-        }
-
-        private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            LineSeries.Clear();
-            foreach (var tableStruct in _controller.Entries)
-            {
-                LineSeries.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
-                //tableStruct.PropertyChanged += TableEntryChanged;
-            }
-            var index = 1;
-            foreach (var tableStruct in _controller.Entries)
-            {
-                tableStruct.ViewId = index;
-                index++;
-
-            }
-            RankHistoryDataGrid.Items.Refresh();
-        }
-
-        private void TableEntryChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var tableStruct = (HistoryWindowControllerBase.TableStruct)sender;
-            foreach (KeyValuePair<int, int> pair in LineSeries.ToList())
-            {
-                if (pair.Key.Equals(tableStruct.ViewId))
-                {
-                    LineSeries.Remove(pair);
-                    LineSeries.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
-                }
-            }
-            LineChart.DataContext = LineChart.DataContext;
         }
 
         private void ExportAsCsvClick(object sender, RoutedEventArgs e)
@@ -85,7 +37,7 @@ namespace Rocket_League_Ranking_Tracker
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)
         {
-            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankHistoryDataGrid.SelectedItem);
+            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankDataGrid.SelectedItem);
         }
 
     }
