@@ -45,25 +45,23 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var reader = command.ExecuteReader();
             var index = 1;
             //Fill entry list with entries to be shown 
-            while (reader.Read())
-            {
-                var entry = new TableStruct() { Id = (long)reader["Id"], ViewId = index, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
-                index++;
-                entry.PropertyChanged += EntryChanged;
-                Entries.Add(entry);
-            }
 
             LineChartContext = new LineChartDataContext()
             {
                 LineSeriesData = new ObservableCollection<KeyValuePair<int, int>>(),
                 Title = table
             };
-
-            foreach (HistoryWindowControllerBase.TableStruct tableStruct in Entries)
+            while (reader.Read())
             {
-                LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
-                tableStruct.PropertyChanged += TableEntryChanged;
+                var entry = new TableStruct() { Id = (long)reader["Id"], ViewId = index, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                index++;
+                entry.PropertyChanged += EntryChanged;
+                Entries.Add(entry);
+                LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(entry.ViewId, entry.Rank));
+                entry.PropertyChanged += TableEntryChanged;
+
             }
+
             Entries.CollectionChanged += EntriesUpdated;
             _lineChart.DataContext = LineChartContext;
             _datagrid.ItemsSource = Entries;
@@ -72,40 +70,39 @@ namespace Rocket_League_Ranking_Tracker.Controller
 
         private void TableSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ((LineSeries)_lineChart.Series[0]).SelectedItem =
-                LineChartContext.LineSeriesData[((HistoryWindowControllerBase.TableStruct)_datagrid.SelectedItem).ViewId - 1];
+            //((LineSeries)_lineChart.Series[0]).SelectedItem =
+            //    LineChartContext.LineSeriesData[((HistoryWindowControllerBase.TableStruct)_datagrid.SelectedItem).ViewId - 1];
         }
 
 
         private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
             LineChartContext.LineSeriesData.Clear();
-            foreach (var tableStruct in Entries)
-            {
-                LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
-                //tableStruct.PropertyChanged += TableEntryChanged;
-            }
             var index = 1;
             foreach (var tableStruct in Entries)
             {
                 tableStruct.ViewId = index;
                 index++;
+
+                LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
+                tableStruct.PropertyChanged += TableEntryChanged;
             }
+
             _datagrid.Items.Refresh();
         }
 
         private void TableEntryChanged(object sender, PropertyChangedEventArgs e)
         {
-            var tableStruct = (HistoryWindowControllerBase.TableStruct)sender;
-            foreach (KeyValuePair<int, int> pair in LineChartContext.LineSeriesData.ToList())
-            {
-                if (pair.Key.Equals(tableStruct.ViewId))
-                {
-                    LineChartContext.LineSeriesData.Remove(pair);
-                    LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
-                }
-            }
-            _lineChart.DataContext = _lineChart.DataContext;
+            //var tableStruct = (HistoryWindowControllerBase.TableStruct)sender;
+            //foreach (KeyValuePair<int, int> pair in LineChartContext.LineSeriesData.ToList())
+            //{
+            //    if (pair.Key.Equals(tableStruct.ViewId))
+            //    {
+            //        LineChartContext.LineSeriesData.Remove(pair);
+            //        LineChartContext.LineSeriesData.Add(new KeyValuePair<int, int>(tableStruct.ViewId, tableStruct.Rank));
+            //    }
+            //}
+            //_lineChart.DataContext = _lineChart.DataContext;
         }
 
 
@@ -208,6 +205,8 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
             Entries.Remove(itemToRemove);
+            _datagrid.Items.Refresh();
+
         }
 
         private class LineChartDataContext
