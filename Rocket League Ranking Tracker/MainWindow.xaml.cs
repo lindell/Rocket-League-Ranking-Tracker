@@ -20,8 +20,7 @@ namespace Rocket_League_Ranking_Tracker
         public MainWindow()
         {
             InitializeComponent();
-            //TODO: Remove parent parent thingy
-            string dbPath = @"database.db";
+            string dbPath = "database.db";
             string connectionString = @"Data Source =" + dbPath + ";Version=3;";
 
             CreateDatabase(dbPath, connectionString);
@@ -51,8 +50,7 @@ namespace Rocket_League_Ranking_Tracker
             processInfo.DataContext = pc;
 
             _notifyIcon = new NotifyIcon();
-            //TODO: Remove parent parent thingy
-            _notifyIcon.Icon = new System.Drawing.Icon(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName + @"\logo.ico");
+            _notifyIcon.Icon = new System.Drawing.Icon("logo.ico");
             _notifyIcon.Visible = true;
             _notifyIcon.Click +=
                 delegate (object sender, EventArgs args)
