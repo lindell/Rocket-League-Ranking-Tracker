@@ -43,7 +43,7 @@
             <Label Content="{Binding Points}" HorizontalAlignment="Left" Margin="350,10,0,0" VerticalAlignment="Top" Height="26" Width="40"/>
         </Grid>
         <Grid HorizontalAlignment="Left" Height="39" Margin="10,10,0,0" VerticalAlignment="Top" Width="377" x:Name="processInfo">
-            <TextBlock Text="Searing for Rocket League process..." FontStyle="Italic" FontWeight="Bold" Grid.ColumnSpan="2" HorizontalAlignment="Center">
+            <TextBlock Text="Searching for Rocket League process..." FontStyle="Italic" FontWeight="Bold" Grid.ColumnSpan="2" HorizontalAlignment="Center">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="Visibility" Value="Collapsed"/>
