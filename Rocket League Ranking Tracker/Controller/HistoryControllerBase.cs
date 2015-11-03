@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -37,5 +38,6 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
         }
 
+        public abstract void PreviewKeyDown(object sender, KeyEventArgs keyEventArgs);
     }
 }

@@ -19,7 +19,8 @@
                            MinWidth="235"
                            CanUserAddRows="False"
                            CanUserResizeColumns="False"
-                           AutoGenerateColumns="False">
+                           AutoGenerateColumns="False"
+                           PreviewKeyDown="DataGridPreviewKeyDown">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Index" Width="40" IsReadOnly="True" Binding="{Binding ViewId}" />
                         <DataGridTextColumn Header="Rank" Width="40" Binding="{Binding Rank}" />

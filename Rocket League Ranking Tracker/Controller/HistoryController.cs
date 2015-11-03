@@ -14,6 +14,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Windows.Input;
 using Microsoft.Windows.Controls;
 using Chart = System.Windows.Controls.DataVisualization.Charting.Chart;
 using DataGrid = System.Windows.Controls.DataGrid;
@@ -66,6 +67,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             _lineChart.DataContext = LineChartContext;
             _datagrid.ItemsSource = Entries;
             _datagrid.SelectionChanged += TableSelectionChanged;
+            
         }
 
         private void TableSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -207,6 +209,15 @@ namespace Rocket_League_Ranking_Tracker.Controller
             Entries.Remove(itemToRemove);
             _datagrid.Items.Refresh();
 
+        }
+
+        public override void PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                Entries.Remove((TableStruct)_datagrid.SelectedItem);
+                _datagrid.Items.Refresh();
+            }
         }
 
         private class LineChartDataContext
