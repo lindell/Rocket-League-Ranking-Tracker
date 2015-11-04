@@ -23,7 +23,7 @@
                            PreviewKeyDown="DataGridPreviewKeyDown"
                            ItemsSource="{Binding Entries}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Index" Width="40" IsReadOnly="True" Binding="{Binding ViewId}" />
+                        <DataGridTextColumn Header="Index" Width="40" IsReadOnly="True" Binding="{Binding ViewIndex}" />
                         <DataGridTextColumn Header="Rank" Width="40" Binding="{Binding Rank}" />
                         <DataGridTextColumn Header="Date" Width="153" Binding="{Binding Date}" />
                     </DataGrid.Columns>
