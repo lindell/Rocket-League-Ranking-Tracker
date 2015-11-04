@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.Windows.Controls;
-using DataGrid = System.Windows.Controls.DataGrid;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -14,8 +9,11 @@ namespace Rocket_League_Ranking_Tracker.Controller
         public ControllerDataContext DataContext { get; set; }
 
         public abstract void ExportAsCsv();
-        public abstract void DeleteItem(DataGrid dataGrid);
+        public abstract void DeleteItem(TableStruct selectedStruct);
 
+        /// <summary>
+        /// Struct for representing the data that is to be shown in the History Window
+        /// </summary>
         public class TableStruct : INotifyPropertyChanged
         {
             private long _id;
@@ -39,13 +37,13 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
         }
 
-
+        /// <summary>
+        /// The dataContext struct to be used in the HistoryWindow
+        /// </summary>
         public class ControllerDataContext
         {
             public ObservableCollection<TableStruct> Entries { get; set; }
             public string Title { get; set; }
         }
-
-        public abstract void PreviewKeyDown(object sender, KeyEventArgs keyEventArgs);
     }
 }

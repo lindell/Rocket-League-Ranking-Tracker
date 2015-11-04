@@ -11,6 +11,7 @@ using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media.Effects;
+using DataGrid = Microsoft.Windows.Controls.DataGrid;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace Rocket_League_Ranking_Tracker
@@ -39,12 +40,20 @@ namespace Rocket_League_Ranking_Tracker
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)
         {
-            _controller.DeleteItem(RankDataGrid);
+            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankDataGrid.SelectedItem);
+            RankDataGrid.Items.Refresh();
         }
 
-        private void DataGridPreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            _controller.PreviewKeyDown(sender, e);
+        /// <summary>
+        /// Listens to delete key strokes and calls DeleteItem.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void DataGridPreviewKeyDown(object sender, KeyEventArgs e)
+        { 
+            if (e.Key != Key.Delete) return;
+            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankDataGrid.SelectedItem);
+            RankDataGrid.Items.Refresh();
         }
     }
 }

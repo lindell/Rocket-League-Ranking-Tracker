@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Windows.Input;
-using DataGrid = System.Windows.Controls.DataGrid;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -43,61 +42,9 @@ namespace Rocket_League_Ranking_Tracker.Controller
             DataContext.Entries.CollectionChanged += EntriesUpdated;
         }
 
-
-        private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action.Equals(NotifyCollectionChangedAction.Add)) return;
-            var viewIndex = 1;
-            foreach (var tableStruct in DataContext.Entries)
-            {
-                tableStruct.ViewIndex = viewIndex;
-                viewIndex++;
-            }
-        }
-
-        private void DatabaseUpdated(object sender, UpdateEventArgs e)
-        {
-            if (!e.Event.Equals(UpdateEventType.Insert)) return;
-            var query = $"SELECT * FROM {_table} WHERE Id={(int) e.RowId}";
-            var command = new SQLiteCommand(query, _dbConnection);
-            var reader = command.ExecuteReader();
-
-            //Fill entry list with entries to be shown 
-            while (reader.Read())
-            {
-                var entry = new TableStruct()
-                {
-                    Id = (long) reader["Id"],
-                    ViewIndex = DataContext.Entries.Count+1,
-                    Rank = (int) reader["Rank"],
-                    Date = (DateTime) reader["Date"]
-                };
-                entry.PropertyChanged += EntryChanged;
-                Application.Current.Dispatcher.Invoke(delegate
-                {
-                    DataContext.Entries.Add(entry);
-                });
-            }
-        }
-
-        private void EntryChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var entry = sender as TableStruct;
-            if (entry == null) return;
-            if (!EntryExists(entry.Id)) return;
-            var query = $"UPDATE {_table} SET Rank = {entry.Rank} , Date = '{entry.Date}' WHERE Id = {entry.Id};";
-            var command = new SQLiteCommand(query, _dbConnection);
-            command.ExecuteNonQuery();
-        }
-
-        private bool EntryExists(long id)
-        {
-            var query = $"SELECT EXISTS(SELECT 1 FROM {_table} WHERE Id = {id} LIMIT 1)";
-            var command = new SQLiteCommand(query, _dbConnection);
-            var reader = command.ExecuteReader();
-            return reader.HasRows;
-        }
-
+        /// <summary>
+        /// Exports database to a CSV file
+        /// </summary>
         public override void ExportAsCsv()
         {
             var csvString = "Id,Ranking,Date\n";
@@ -144,22 +91,94 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
         }
 
-        public override void DeleteItem(DataGrid grid)
+        /// <summary>
+        /// Deletes the selected item in an datagrid
+        /// </summary>
+        /// <param name="selectedStruct"></param>
+        public override void DeleteItem(TableStruct selectedStruct)
         {
-            var query = $"DELETE FROM {_table} WHERE Id = {((TableStruct)grid.SelectedItem).Id};";
+            var query = $"DELETE FROM {_table} WHERE Id = {selectedStruct.Id};";
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
-            DataContext.Entries.Remove(((TableStruct)grid.SelectedItem));
-            grid.Items.Refresh();
+            DataContext.Entries.Remove(selectedStruct);
         }
 
-        public override void PreviewKeyDown(object sender, KeyEventArgs e)
+        /// <summary>
+        /// Event listener for when the collection Entries in the DataContext has been updated or changed.
+        /// This method updates the viewIndex on all the remaining TableStructs.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var dataGrid = sender as DataGrid;
-            if (e.Key != Key.Delete) return;
-            if (dataGrid == null) return;
-            DeleteItem(dataGrid);
-            dataGrid.Items.Refresh();
+            if (e.Action.Equals(NotifyCollectionChangedAction.Add)) return;
+            var viewIndex = 1;
+            foreach (var tableStruct in DataContext.Entries)
+            {
+                tableStruct.ViewIndex = viewIndex;
+                viewIndex++;
+            }
+        }
+
+        /// <summary>
+        /// Called when the database recieves an update event.
+        /// This method inserts newly items into the GUI when new
+        /// items are inserted into the database.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DatabaseUpdated(object sender, UpdateEventArgs e)
+        {
+            if (!e.Event.Equals(UpdateEventType.Insert)) return;
+            var query = $"SELECT * FROM {_table} WHERE Id={(int) e.RowId}";
+            var command = new SQLiteCommand(query, _dbConnection);
+            var reader = command.ExecuteReader();
+
+            //Fill entry list with entries to be shown 
+            while (reader.Read())
+            {
+                var entry = new TableStruct()
+                {
+                    Id = (long) reader["Id"],
+                    ViewIndex = DataContext.Entries.Count+1,
+                    Rank = (int) reader["Rank"],
+                    Date = (DateTime) reader["Date"]
+                };
+                entry.PropertyChanged += EntryChanged;
+                Application.Current.Dispatcher.Invoke(delegate
+                {
+                    DataContext.Entries.Add(entry);
+                });
+            }
+        }
+
+        /// <summary>
+        /// Gets called once an entry in the Datacontext.Entries changes.
+        /// This method makes sure that an update to the database happens.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EntryChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var entry = sender as TableStruct;
+            if (entry == null) return;
+            if (!EntryExists(entry.Id)) return;
+            var query = $"UPDATE {_table} SET Rank = {entry.Rank} , Date = '{entry.Date}' WHERE Id = {entry.Id};";
+            var command = new SQLiteCommand(query, _dbConnection);
+            command.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// Checks whether an entry exists or not in the database
+        /// </summary>
+        /// <param name="id">Database ID to be checked</param>
+        /// <returns></returns>
+        private bool EntryExists(long id)
+        {
+            var query = $"SELECT EXISTS(SELECT 1 FROM {_table} WHERE Id = {id} LIMIT 1)";
+            var command = new SQLiteCommand(query, _dbConnection);
+            var reader = command.ExecuteReader();
+            return reader.HasRows;
         }
     }
 }
