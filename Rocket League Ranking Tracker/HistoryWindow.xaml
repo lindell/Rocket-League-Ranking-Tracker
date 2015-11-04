@@ -43,36 +43,35 @@
                         <chartingToolkit:LineSeries 
                                             Name="LineSeries"
                                             Title="{Binding Title}"
-                                            DependentValuePath="Value" 
-                                            IndependentValuePath="Key"
+                                            DependentValuePath="Rank" 
+                                            IndependentValuePath="ViewId"
                                             ItemsSource="{Binding LineSeriesData}"
                                             IsSelectionEnabled="True"
-                                            
                                             >
-                        <chartingToolkit:LineSeries.DataPointStyle>
-                            <Style TargetType="chartingToolkit:LineDataPoint">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                                <Setter Property="Background" Value="DodgerBlue"/>
-                                <Setter Property="BitmapEffect">
-                                    <Setter.Value>
-                                        <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
-                                    </Setter.Value>
-                                </Setter>
+                            <chartingToolkit:LineSeries.DataPointStyle>
+                                <Style TargetType="chartingToolkit:LineDataPoint">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Setter Property="Background" Value="DodgerBlue"/>
+                                    <Setter Property="BitmapEffect">
+                                        <Setter.Value>
+                                            <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
+                                        </Setter.Value>
+                                    </Setter>
 
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="BitmapEffect">
-                                            <Setter.Value>
-                                                <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Background" Value="Red"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="BitmapEffect">
+                                                <Setter.Value>
+                                                    <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Background" Value="Red"/>
 
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
 
-                        </chartingToolkit:LineSeries.DataPointStyle>
+                            </chartingToolkit:LineSeries.DataPointStyle>
 
 
                     </chartingToolkit:LineSeries>

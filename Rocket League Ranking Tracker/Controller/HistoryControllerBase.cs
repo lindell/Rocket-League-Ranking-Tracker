@@ -21,9 +21,10 @@ namespace Rocket_League_Ranking_Tracker.Controller
             private long _id;
             private int _rank;
             private DateTime _date;
+            private int _viewId;
 
             public long Id { get { return _id; } set { _id = value; NotifyPropertyChanged("Id"); } }
-            public int ViewId { get; set; }
+            public int ViewId { get { return _viewId; } set { _viewId = value; NotifyPropertyChanged("ViewId");} }
             public int Rank { get { return _rank; } set { _rank = value; NotifyPropertyChanged("Rank"); } }
             public DateTime Date { get { return _date; } set { _date = value; NotifyPropertyChanged("Date"); } }
 
