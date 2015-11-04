@@ -17,8 +17,6 @@ namespace Rocket_League_Ranking_Tracker.Controller
         private readonly SQLiteConnection _dbConnection;
         private readonly string _table;
 
-
-
         public HistoryWindowController(SQLiteConnection dbConnection, string table)
         {
             _dbConnection = dbConnection;
@@ -33,12 +31,11 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var query = "SELECT * FROM " + table;
             var command = new SQLiteCommand(query, dbConnection);
             var reader = command.ExecuteReader();
-            var index = 1;
-
+            var viewIndex = 1;
             while (reader.Read())
             {
-                var entry = new TableStruct() { Id = (long)reader["Id"], ViewIndex = index, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
-                index++;
+                var entry = new TableStruct() { Id = (long)reader["Id"], ViewIndex = viewIndex, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                viewIndex++;
                 entry.PropertyChanged += EntryChanged;
                 DataContext.Entries.Add(entry);
             }
@@ -50,11 +47,11 @@ namespace Rocket_League_Ranking_Tracker.Controller
         private void EntriesUpdated(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action.Equals(NotifyCollectionChangedAction.Add)) return;
-            var index = 1;
+            var viewIndex = 1;
             foreach (var tableStruct in DataContext.Entries)
             {
-                tableStruct.ViewIndex = index;
-                index++;
+                tableStruct.ViewIndex = viewIndex;
+                viewIndex++;
             }
         }
 
@@ -83,7 +80,6 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
         }
 
-
         private void EntryChanged(object sender, PropertyChangedEventArgs e)
         {
             var entry = sender as TableStruct;
@@ -101,7 +97,6 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var reader = command.ExecuteReader();
             return reader.HasRows;
         }
-
 
         public override void ExportAsCsv()
         {

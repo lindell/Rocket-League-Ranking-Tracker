@@ -11,11 +11,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
 {
     public abstract class HistoryWindowControllerBase
     {
-        protected ArrayList EntriesToRemove;
-        protected ArrayList EntriesToUpdate;
         public ControllerDataContext DataContext { get; set; }
-
-        private ObservableCollection<TableStruct> _entries; 
 
         public abstract void ExportAsCsv();
         public abstract void DeleteItem(DataGrid dataGrid);
