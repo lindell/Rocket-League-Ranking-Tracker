@@ -20,7 +20,8 @@
                            CanUserAddRows="False"
                            CanUserResizeColumns="False"
                            AutoGenerateColumns="False"
-                           PreviewKeyDown="DataGridPreviewKeyDown">
+                           PreviewKeyDown="DataGridPreviewKeyDown"
+                           ItemsSource="{Binding Entries}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Index" Width="40" IsReadOnly="True" Binding="{Binding ViewId}" />
                         <DataGridTextColumn Header="Rank" Width="40" Binding="{Binding Rank}" />
@@ -33,7 +34,7 @@
                     </DataGrid.ContextMenu>
                 </DataGrid>
                 <chartingToolkit:Chart Name="LineChart" 
-                                       Title="Ranking" 
+                                       Title="{Binding Title}" 
                                        VerticalAlignment="Stretch" 
                                        HorizontalAlignment="Stretch" 
                                        Margin="10,10,10,40" 
@@ -44,8 +45,8 @@
                                             Name="LineSeries"
                                             Title="{Binding Title}"
                                             DependentValuePath="Rank" 
-                                            IndependentValuePath="ViewId"
-                                            ItemsSource="{Binding LineSeriesData}"
+                                            IndependentValuePath="ViewIndex"
+                                            ItemsSource="{Binding Entries}"
                                             IsSelectionEnabled="True"
                                             >
                             <chartingToolkit:LineSeries.DataPointStyle>

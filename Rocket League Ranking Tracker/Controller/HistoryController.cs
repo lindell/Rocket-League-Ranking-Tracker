@@ -6,17 +6,8 @@ using System.Windows;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Data.Common;
-using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Controls.DataVisualization.Charting;
-using System.Windows.Forms.DataVisualization.Charting;
 using System.Windows.Input;
-using Microsoft.Windows.Controls;
-using Chart = System.Windows.Controls.DataVisualization.Charting.Chart;
 using DataGrid = System.Windows.Controls.DataGrid;
 
 namespace Rocket_League_Ranking_Tracker.Controller
@@ -25,44 +16,34 @@ namespace Rocket_League_Ranking_Tracker.Controller
     {
         private readonly SQLiteConnection _dbConnection;
         private readonly string _table;
-        private Chart _lineChart;
-        private DataGrid _datagrid;
-        private LineChartDataContext LineChartContext;
 
 
-        public HistoryWindowController(SQLiteConnection dbConnection, string table, Chart lineChart, DataGrid dataGrid)
+
+        public HistoryWindowController(SQLiteConnection dbConnection, string table)
         {
             _dbConnection = dbConnection;
             _dbConnection.Update += DatabaseUpdated;
             _table = table;
-            _lineChart = lineChart;
-            _datagrid = dataGrid;
-            Entries = new ObservableCollection<TableStruct>();
-            EntriesToRemove = new ArrayList();
-            EntriesToUpdate = new ArrayList();
+            DataContext = new ControllerDataContext()
+            {
+                Entries = new ObservableCollection<TableStruct>(),
+                Title = table
+            };
 
             var query = "SELECT * FROM " + table;
             var command = new SQLiteCommand(query, dbConnection);
             var reader = command.ExecuteReader();
             var index = 1;
-            //Fill entry list with entries to be shown 
 
-            LineChartContext = new LineChartDataContext()
-            {
-                LineSeriesData = Entries,
-                Title = table
-            };
             while (reader.Read())
             {
-                var entry = new TableStruct() { Id = (long)reader["Id"], ViewId = index, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                var entry = new TableStruct() { Id = (long)reader["Id"], ViewIndex = index, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
                 index++;
                 entry.PropertyChanged += EntryChanged;
-                Entries.Add(entry);
+                DataContext.Entries.Add(entry);
             }
 
-            Entries.CollectionChanged += EntriesUpdated;
-            _lineChart.DataContext = LineChartContext;
-            _datagrid.ItemsSource = Entries;            
+            DataContext.Entries.CollectionChanged += EntriesUpdated;
         }
 
 
@@ -70,9 +51,9 @@ namespace Rocket_League_Ranking_Tracker.Controller
         {
             if (e.Action.Equals(NotifyCollectionChangedAction.Add)) return;
             var index = 1;
-            foreach (var tableStruct in Entries)
+            foreach (var tableStruct in DataContext.Entries)
             {
-                tableStruct.ViewId = index;
+                tableStruct.ViewIndex = index;
                 index++;
             }
         }
@@ -90,14 +71,14 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 var entry = new TableStruct()
                 {
                     Id = (long) reader["Id"],
-                    ViewId = Entries.Count+1,
+                    ViewIndex = DataContext.Entries.Count+1,
                     Rank = (int) reader["Rank"],
                     Date = (DateTime) reader["Date"]
                 };
                 entry.PropertyChanged += EntryChanged;
                 Application.Current.Dispatcher.Invoke(delegate
                 {
-                    Entries.Add(entry);
+                    DataContext.Entries.Add(entry);
                 });
             }
         }
@@ -168,27 +149,22 @@ namespace Rocket_League_Ranking_Tracker.Controller
             }
         }
 
-        public override void DeleteItem(TableStruct itemToRemove)
+        public override void DeleteItem(DataGrid grid)
         {
-            var query = $"DELETE FROM {_table} WHERE Id = {itemToRemove.Id};";
+            var query = $"DELETE FROM {_table} WHERE Id = {((TableStruct)grid.SelectedItem).Id};";
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
-            Entries.Remove(itemToRemove);
-            _datagrid.Items.Refresh();
+            DataContext.Entries.Remove(((TableStruct)grid.SelectedItem));
+            grid.Items.Refresh();
         }
 
         public override void PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete)
-            {
-                DeleteItem((TableStruct)_datagrid.SelectedItem);
-            }
-        }
-
-        private class LineChartDataContext
-        {
-            public ObservableCollection<TableStruct> LineSeriesData { get; set; }
-            public string Title { get; set; }
+            var dataGrid = sender as DataGrid;
+            if (e.Key != Key.Delete) return;
+            if (dataGrid == null) return;
+            DeleteItem(dataGrid);
+            dataGrid.Items.Refresh();
         }
     }
 }

@@ -27,7 +27,8 @@ namespace Rocket_League_Ranking_Tracker
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
-            _controller = new HistoryWindowController(dbConnection, table, LineChart, RankDataGrid);
+            _controller = new HistoryWindowController(dbConnection, table);
+            DataContext = _controller.DataContext;
             Show();
         }
 
@@ -38,7 +39,7 @@ namespace Rocket_League_Ranking_Tracker
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)
         {
-            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankDataGrid.SelectedItem);
+            _controller.DeleteItem(RankDataGrid);
         }
 
         private void DataGridPreviewKeyDown(object sender, KeyEventArgs e)
