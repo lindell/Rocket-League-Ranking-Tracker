@@ -78,6 +78,7 @@
                     </chartingToolkit:LineSeries>
 
                     <chartingToolkit:Chart.Axes>
+                        <chartingToolkit:LinearAxis Orientation="Y" ShowGridLines="True"/>
                         <chartingToolkit:LinearAxis Location="Top" Orientation="X"/>
                     </chartingToolkit:Chart.Axes>
                     
