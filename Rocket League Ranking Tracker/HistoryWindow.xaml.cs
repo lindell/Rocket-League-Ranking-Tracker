@@ -13,6 +13,11 @@ using System.Windows.Input;
 using System.Windows.Media.Effects;
 using DataGrid = Microsoft.Windows.Controls.DataGrid;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using System;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Rocket_League_Ranking_Tracker
 {
@@ -55,5 +60,46 @@ namespace Rocket_League_Ranking_Tracker
             _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankDataGrid.SelectedItem);
             RankDataGrid.Items.Refresh();
         }
-    }
+
+
+        private void SasveAsPictureClick(object sender, RoutedEventArgs e)
+        {
+            if (LineChart.Series[0] == null)
+                {
+                    MessageBox.Show("there is nothing to export");
+                }
+                else
+                {
+                    var bounds = VisualTreeHelper.GetDescendantBounds(LineChart);
+
+                    var renderBitmap = new RenderTargetBitmap((int)bounds.Width, (int)bounds.Height, 96, 96, PixelFormats.Pbgra32);
+
+                    var isolatedVisual = new DrawingVisual();
+                    using (var drawing = isolatedVisual.RenderOpen())
+                    {
+                        drawing.DrawRectangle(Brushes.White, null, new Rect(new Point(), bounds.Size)); // Optional Background
+                        drawing.DrawRectangle(new VisualBrush(LineChart), null, new Rect(new Point(), bounds.Size));
+                    }
+
+                    renderBitmap.Render(isolatedVisual);
+
+                    var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+                    {
+                        FileName = _controller.DataContext.Title + " " + DateTime.Now,
+                        DefaultExt = "png"
+                    };
+
+                    var result = saveFileDialog.ShowDialog();
+                    if (result != true) return;
+                    var obrCesta = saveFileDialog.FileName;
+
+                    using (var outStream = new FileStream(obrCesta, FileMode.Create))
+                    {
+                        var encoder = new PngBitmapEncoder();
+                        encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+                        encoder.Save(outStream);
+                    }
+                }
+            }
+        }
 }

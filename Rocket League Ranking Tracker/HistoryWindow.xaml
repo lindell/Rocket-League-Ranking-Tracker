@@ -87,6 +87,7 @@
         </Grid>
         <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom">
             <Button Content="Export as CSV" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,10,10" Width="90" Click="ExportAsCsvClick"/>
+            <Button Content="Save as picture" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,10,110,10" Width="90" Click="SasveAsPictureClick"/>
         </Grid>
     </Grid>
 </Window>
