@@ -6,7 +6,7 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public SoloStandardRanking(SQLiteConnection con) : base(con)
         {
-            Address = "\"RocketLeague.exe\" + 014F9C5C + 108 + 244 + 640 + 1c4";
+            Address = "\"RocketLeague.exe\" + 014F9C5C + 108 + 244 + 620 + 1c4";
             Table = "SoloStandardRanking";
         }
     }
