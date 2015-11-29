@@ -6,7 +6,7 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public DoublesRanking(SQLiteConnection con) : base(con)
         {
-            Address = "\"RocketLeague.exe\" + 01557590 + 4a4+10+340+84";
+            Address = "\"RocketLeague.exe\" + 014F9C5C + 108 + 244 + 680 + 1c4";
             Table = "DualsRanking";
         }
     }
