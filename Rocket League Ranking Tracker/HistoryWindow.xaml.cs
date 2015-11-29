@@ -85,7 +85,7 @@ namespace Rocket_League_Ranking_Tracker
 
                     var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                     {
-                        FileName = _controller.DataContext.Title + " " + DateTime.Now,
+                        FileName = _controller.DataContext.Title + " " + DateTime.Now.ToString().Replace(":", "-"),
                         DefaultExt = "png"
                     };
 
