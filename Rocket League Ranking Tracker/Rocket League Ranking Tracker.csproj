@@ -106,6 +106,7 @@
     <Compile Include="Controller\ProcessController.cs" />
     <Compile Include="Model\DoublesRanking.cs" />
     <Compile Include="Model\MemoryHandler.cs" />
+    <Compile Include="Model\Pointers\CheatEngineReader.cs" />
     <Compile Include="Model\RankingModel.cs" />
     <Compile Include="Model\Score.cs" />
     <Compile Include="Model\SoloRanking.cs" />
@@ -180,9 +181,11 @@
   <ItemGroup>
     <Resource Include="logo.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>Copy "$(ProjectDir)\logo.ico" "$(TargetDir)\logo.ico"</PreBuildEvent>
+    <PreBuildEvent>Copy "$(ProjectDir)\logo.ico" "$(TargetDir)\logo.ico"
+Copy "$(ProjectDir)\Model\Pointers\RocketLeague.CT" "$(TargetDir)\RocketLeague.CT"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

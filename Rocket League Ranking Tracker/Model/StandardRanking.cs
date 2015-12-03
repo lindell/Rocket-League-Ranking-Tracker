@@ -1,5 +1,5 @@
 ﻿using System.Data.SQLite;
-
+using Rocket_League_Ranking_Tracker.Model.Pointers;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
@@ -7,7 +7,7 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public StandardRanking(SQLiteConnection con) : base(con)
         {
-            Address = "\"RocketLeague.exe\" + 014F9C5C + 108 + 244 + 580 + 1c4";
+            Address = CheatEngineReader.getPointers("STANDARD");
             Table = "StandardRanking";
         }
     }
