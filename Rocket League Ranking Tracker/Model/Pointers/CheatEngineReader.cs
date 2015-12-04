@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -16,6 +17,8 @@ namespace Rocket_League_Ranking_Tracker.Model.Pointers
     class CheatEngineReader
     {
         static private string url = @"https://api.github.com/repos/lindell/Rocket-League-Ranking-Tracker/contents/Rocket League%20Ranking%20Tracker/Model/Pointers/RocketLeague.CT";
+        private static string shaFile = "latest-sha.txt";
+        private static string cheatEngineTableFile = "RocketLeague.CT";
         static private XmlTextReader reader = null;
         static Dictionary<string, string> pointers = new Dictionary<string,string>() ;
 
@@ -23,8 +26,9 @@ namespace Rocket_League_Ranking_Tracker.Model.Pointers
         {
             if (pointers.Count <= 0)  {
                 updateToNewTable();
+                Console.WriteLine("Reading XML");
 
-                reader = new XmlTextReader("RocketLeague.CT");
+                reader = new XmlTextReader(cheatEngineTableFile);
 
                 while (reader.ReadToFollowing("CheatEntry"))
                 {
@@ -51,12 +55,19 @@ namespace Rocket_League_Ranking_Tracker.Model.Pointers
         public static string getPointers(string id)
         {
             loadXML();
-            return pointers[id];
+            try
+            {
+                return pointers[id];
+            }
+            catch (KeyNotFoundException e)
+            {
+                return "";
+            }
         }
 
         public static void updateToNewTable()
         {
-            Console.WriteLine("Updating");
+            Console.WriteLine("Updating...");
             try
             {
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
@@ -71,9 +82,21 @@ namespace Rocket_League_Ranking_Tracker.Model.Pointers
                     DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Response));
                     object objResponse = jsonSerializer.ReadObject(response.GetResponseStream());
                     Response jsonResponse = objResponse as Response;
-                    Console.WriteLine("Done");
-                    var base64EncodedBytes = System.Convert.FromBase64String(jsonResponse.Content);
-                    Console.WriteLine(System.Text.Encoding.UTF8.GetString(base64EncodedBytes));
+
+
+                    if (jsonResponse.Sha == ShaFromFile())
+                    {
+                        Console.WriteLine("SHA is the same. No update needed.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("SHA missmatch. Time for update!");
+                        var base64EncodedBytes = System.Convert.FromBase64String(jsonResponse.Content);
+                        var fileData = System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+
+                        ShaToFile(jsonResponse.Sha);
+                        SetCheatEngineData(fileData);
+                    }
                 }
             }
             catch (Exception e)
@@ -81,6 +104,32 @@ namespace Rocket_League_Ranking_Tracker.Model.Pointers
                 Console.WriteLine("Failed");
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private static void SetCheatEngineData(string data)
+        {
+            using (StreamWriter file = new System.IO.StreamWriter(cheatEngineTableFile, false))
+            {
+                file.Write(data);
+            }
+        }
+
+        private static void ShaToFile(string sha)
+        {
+            using (StreamWriter file = new System.IO.StreamWriter(shaFile))
+            {
+                file.WriteLine(sha);
+            }
+        }
+
+        private static string ShaFromFile()
+        {
+            string line;
+            using (StreamReader file = new System.IO.StreamReader(shaFile))
+            {
+                line = file.ReadLine();
+            }
+            return line;
         }
 
         [DataContract]
