@@ -101,7 +101,7 @@ namespace Rocket_League_Ranking_Tracker.Utilities.Memory
         /// <summary>
         ///     Gets address pointer
         /// </summary>
-        /// <param name="address">Address</param>
+        /// <param name="address">RankingAddress</param>
         /// <returns></returns>
         public IntPtr GetAddress(string address)
         {
@@ -140,7 +140,7 @@ namespace Rocket_League_Ranking_Tracker.Utilities.Memory
         /// <summary>
         ///     Gets address offsets
         /// </summary>
-        /// <param name="address">Address</param>
+        /// <param name="address">RankingAddress</param>
         /// <returns></returns>
         protected static int[] GetAddressOffsets(string address)
         {

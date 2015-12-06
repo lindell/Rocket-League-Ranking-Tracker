@@ -106,6 +106,7 @@
     <Compile Include="Controller\HistoryControllerBase.cs" />
     <Compile Include="Controller\ProcessController.cs" />
     <Compile Include="Model\DoublesRanking.cs" />
+    <Compile Include="Model\GoalTrackerModel.cs" />
     <Compile Include="Model\MemoryHandler.cs" />
     <Compile Include="Model\Pointers\CheatEngineReader.cs" />
     <Compile Include="Model\RankingModel.cs" />

@@ -2,9 +2,12 @@
 using Rocket_League_Ranking_Tracker.Model;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -27,11 +30,12 @@ namespace Rocket_League_Ranking_Tracker
             
             _dbConnection = new SQLiteConnection(connectionString);
             _dbConnection.Open();
-            
+
             RankingModel solo = new SoloRanking(_dbConnection);
             RankingModel doubles = new DoublesRanking(_dbConnection);
             RankingModel soloStandard = new SoloStandardRanking(_dbConnection);
             RankingModel standard = new StandardRanking(_dbConnection);
+
             var scoreModel = new Score();
 
             var pc = new ProcessController();
@@ -70,11 +74,52 @@ namespace Rocket_League_Ranking_Tracker
             var dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
             var rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "SoloStandardRanking", "StandardRanking" });
-            foreach(string table in rankingTables)
+            var columns = new List<string> { "Rank", "Date", "OrangeGoals", "BlueGoals" };
+
+            //TODO: Clean up, now is a mess
+            foreach (string tableName in rankingTables)
             {
-                var query = "create table if not exists " + table + " (Id INTEGER Primary Key, Rank int NOT NULL, Date DateTime NOT NULL); ";
+                var query = "create table if not exists " + tableName + " (Id INTEGER Primary Key, Rank int NOT NULL, Date DateTime NOT NULL, OrangeGoals int, BlueGoals int); ";
                 var command = new SQLiteCommand(query, dbConnection);
                 command.ExecuteNonQuery();
+
+                using (var con = new SQLiteConnection(connectionString))
+                {
+                    using (var cmd = new SQLiteCommand("PRAGMA table_info(" + tableName + ");"))
+                    {
+                        var table = new DataTable();
+
+                        cmd.Connection = con;
+                        cmd.Connection.Open();
+
+                        SQLiteDataAdapter adp = null;
+                        try
+                        {
+                            adp = new SQLiteDataAdapter(cmd);
+                            adp.Fill(table);
+                            con.Close();
+                            foreach (var column in columns)
+                            {
+                                bool match = false;
+                                var list = table.AsEnumerable().Select(r => r["name"].ToString()).ToList();
+                                foreach (var tableColumn in list)
+                                {
+                                    if (column == tableColumn)
+                                        match = true;
+
+                                }
+                                if (!match)
+                                {
+                                    query = $"ALTER TABLE {tableName} ADD {column} int;";
+                                    command = new SQLiteCommand(query, dbConnection);
+                                    command.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        { }
+                    }
+                }
             }
             dbConnection.Close();
         }

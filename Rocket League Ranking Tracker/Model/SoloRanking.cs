@@ -7,7 +7,7 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public SoloRanking(SQLiteConnection con) : base(con)
         {
-            Address = CheatEngineReader.getPointers("SOLO");
+            RankingAddress = CheatEngineReader.getPointers("SOLO");
             Table = "SoloRanking";
         }
     }

@@ -3,26 +3,31 @@ using Rocket_League_Ranking_Tracker.Utilities.Memory;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Data.SQLite;
+using Rocket_League_Ranking_Tracker.Model.Pointers;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
     class RankingModel : INotifyPropertyChanged, IMemoryHandler
     {
-        protected string Address = "";
+        protected string RankingAddress = "";
         protected string Table = "";
+        protected string OrangeGoalsAddress;
+        protected string BlueGoalsAddress;
 
         private int _ranking;
-
         protected SQLiteConnection DbConnection;
+        private Process _process;
 
         public RankingModel(SQLiteConnection dbConnection)
         {
             DbConnection = dbConnection;
+            OrangeGoalsAddress = CheatEngineReader.getPointers("ORANGEGOALS");
+            BlueGoalsAddress = CheatEngineReader.getPointers("BLUEGOALS");
         }
 
         public int Ranking{ get { return _ranking; } set { _ranking = value; NotifyPropertyChanged("Ranking"); } }
 
-        public Process RocketLeagueProcess { get; set; }
+        public Process RocketLeagueProcess {get; set; } 
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -39,8 +44,7 @@ namespace Rocket_League_Ranking_Tracker.Model
             if (RocketLeagueProcess != null)
             {
                 var memory = new Memory(RocketLeagueProcess);
-                IntPtr rankingAddr = memory.GetAddress(Address);
-
+                IntPtr rankingAddr = memory.GetAddress(RankingAddress);
                 var ranking = memory.ReadInt32(rankingAddr);
                 Ranking = ranking;
                 if(ranking != GetPreviousRanking() && ranking != 50 && ranking !=0 && ranking > 0 && ranking < 2000)
@@ -53,7 +57,11 @@ namespace Rocket_League_Ranking_Tracker.Model
 
         private void UpdatePreviousRanking(int ranking)
         {
-            var query = $"INSERT into {Table} (Rank, Date) values ({ranking} , '{DateTime.Now}')";
+            var memory = new Memory(RocketLeagueProcess);
+            var orangeGoals = memory.ReadInt32(memory.GetAddress(OrangeGoalsAddress));
+            var blueGoals = memory.ReadInt32(memory.GetAddress(BlueGoalsAddress));
+
+            var query = $"INSERT into {Table} (Rank, Date, OrangeGoals, BlueGoals) values ({ranking} , '{DateTime.Now}', {orangeGoals}, {blueGoals})";
             var command = new SQLiteCommand(query, DbConnection);
             command.ExecuteNonQuery();
         }

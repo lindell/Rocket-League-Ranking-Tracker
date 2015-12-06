@@ -7,7 +7,7 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public DoublesRanking(SQLiteConnection con) : base(con)
         {
-            Address = CheatEngineReader.getPointers("DOUBLE");
+            RankingAddress = CheatEngineReader.getPointers("DOUBLE");
             Table = "DualsRanking";
         }
     }

@@ -7,7 +7,7 @@ namespace Rocket_League_Ranking_Tracker.Model
     {
         public StandardRanking(SQLiteConnection con) : base(con)
         {
-            Address = CheatEngineReader.getPointers("STANDARD");
+            RankingAddress = CheatEngineReader.getPointers("STANDARD");
             Table = "StandardRanking";
         }
     }
