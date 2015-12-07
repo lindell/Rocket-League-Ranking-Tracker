@@ -23,7 +23,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             _table = table;
             DataContext = new ControllerDataContext()
             {
-                Entries = new ObservableCollection<TableStruct>(),
+                RankEntries = new ObservableCollection<RankTableStruct>(),
                 Title = table
             };
 
@@ -33,13 +33,26 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var viewIndex = 1;
             while (reader.Read())
             {
-                var entry = new TableStruct() { Id = (long)reader["Id"], ViewIndex = viewIndex, Rank = (int)reader["Rank"], Date = (DateTime)reader["Date"] };
+                
+                var orangeGoal = reader["OrangeGoals"] as int? ?? default(int);
+                int blueGoal = reader["BlueGoals"] as int? ?? default(int);
+                int rank = reader["Rank"] as int? ?? default(int);
+                int diff = 0;
+                if(viewIndex > 1)
+                    if (DataContext.RankEntries[viewIndex-2].Rank < rank)
+                        //If this game was a win
+                        diff = orangeGoal > blueGoal ? orangeGoal - blueGoal : blueGoal - orangeGoal;
+                    else
+                        //If this game was a loss
+                        diff = orangeGoal < blueGoal ? orangeGoal - blueGoal : blueGoal - orangeGoal;
+
+                var entry = new RankTableStruct() { Id = (long)reader["Id"], ViewIndex = viewIndex, Rank = rank, Date = (DateTime)reader["Date"], GoalDifference = diff};
                 viewIndex++;
                 entry.PropertyChanged += EntryChanged;
-                DataContext.Entries.Add(entry);
+                DataContext.RankEntries.Add(entry);
             }
 
-            DataContext.Entries.CollectionChanged += EntriesUpdated;
+            DataContext.RankEntries.CollectionChanged += EntriesUpdated;
         }
 
         /// <summary>
@@ -95,16 +108,16 @@ namespace Rocket_League_Ranking_Tracker.Controller
         /// Deletes the selected item in an datagrid
         /// </summary>
         /// <param name="selectedStruct"></param>
-        public override void DeleteItem(TableStruct selectedStruct)
+        public override void DeleteItem(RankTableStruct selectedStruct)
         {
             var query = $"DELETE FROM {_table} WHERE Id = {selectedStruct.Id};";
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
-            DataContext.Entries.Remove(selectedStruct);
+            DataContext.RankEntries.Remove(selectedStruct);
         }
 
         /// <summary>
-        /// Event listener for when the collection Entries in the DataContext has been updated or changed.
+        /// Event listener for when the collection RankEntries in the DataContext has been updated or changed.
         /// This method updates the viewIndex on all the remaining TableStructs.
         /// </summary>
         /// <param name="sender"></param>
@@ -113,7 +126,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
         {
             if (e.Action.Equals(NotifyCollectionChangedAction.Add)) return;
             var viewIndex = 1;
-            foreach (var tableStruct in DataContext.Entries)
+            foreach (var tableStruct in DataContext.RankEntries)
             {
                 tableStruct.ViewIndex = viewIndex;
                 viewIndex++;
@@ -137,30 +150,30 @@ namespace Rocket_League_Ranking_Tracker.Controller
             //Fill entry list with entries to be shown 
             while (reader.Read())
             {
-                var entry = new TableStruct()
+                var entry = new RankTableStruct()
                 {
                     Id = (long) reader["Id"],
-                    ViewIndex = DataContext.Entries.Count+1,
+                    ViewIndex = DataContext.RankEntries.Count+1,
                     Rank = (int) reader["Rank"],
                     Date = (DateTime) reader["Date"]
                 };
                 entry.PropertyChanged += EntryChanged;
                 Application.Current.Dispatcher.Invoke(delegate
                 {
-                    DataContext.Entries.Add(entry);
+                    DataContext.RankEntries.Add(entry);
                 });
             }
         }
 
         /// <summary>
-        /// Gets called once an entry in the Datacontext.Entries changes.
+        /// Gets called once an entry in the Datacontext.RankEntries changes.
         /// This method makes sure that an update to the database happens.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void EntryChanged(object sender, PropertyChangedEventArgs e)
         {
-            var entry = sender as TableStruct;
+            var entry = sender as RankTableStruct;
             if (entry == null) return;
             if (!EntryExists(entry.Id)) return;
             var query = $"UPDATE {_table} SET Rank = {entry.Rank} , Date = '{entry.Date}' WHERE Id = {entry.Id};";

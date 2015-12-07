@@ -9,22 +9,25 @@ namespace Rocket_League_Ranking_Tracker.Controller
         public ControllerDataContext DataContext { get; set; }
 
         public abstract void ExportAsCsv();
-        public abstract void DeleteItem(TableStruct selectedStruct);
+        public abstract void DeleteItem(RankTableStruct selectedStruct);
 
         /// <summary>
         /// Struct for representing the data that is to be shown in the History Window
         /// </summary>
-        public class TableStruct : INotifyPropertyChanged
+        public class RankTableStruct : INotifyPropertyChanged
         {
             private long _id;
             private int _rank;
             private DateTime _date;
             private int _viewIndex;
+            private int _goalDifference;
 
             public long Id { get { return _id; } set { _id = value; NotifyPropertyChanged("Id"); } }
             public int ViewIndex { get { return _viewIndex; } set { _viewIndex = value; NotifyPropertyChanged("ViewIndex");} }
             public int Rank { get { return _rank; } set { _rank = value; NotifyPropertyChanged("Rank"); } }
             public DateTime Date { get { return _date; } set { _date = value; NotifyPropertyChanged("Date"); } }
+            public int GoalDifference { get { return _goalDifference; } set { _goalDifference = value; NotifyPropertyChanged("GoalDifference"); } }
+
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -42,7 +45,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
         /// </summary>
         public class ControllerDataContext
         {
-            public ObservableCollection<TableStruct> Entries { get; set; }
+            public ObservableCollection<RankTableStruct> RankEntries { get; set; }
             public string Title { get; set; }
         }
     }

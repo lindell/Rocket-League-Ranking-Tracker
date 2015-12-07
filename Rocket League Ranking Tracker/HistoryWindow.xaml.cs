@@ -45,7 +45,7 @@ namespace Rocket_League_Ranking_Tracker
 
         private void DeleteItemClick(object sender, RoutedEventArgs e)
         {
-            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankDataGrid.SelectedItem);
+            _controller.DeleteItem((HistoryWindowControllerBase.RankTableStruct)RankDataGrid.SelectedItem);
             RankDataGrid.Items.Refresh();
         }
 
@@ -57,20 +57,20 @@ namespace Rocket_League_Ranking_Tracker
         public void DataGridPreviewKeyDown(object sender, KeyEventArgs e)
         { 
             if (e.Key != Key.Delete) return;
-            _controller.DeleteItem((HistoryWindowControllerBase.TableStruct)RankDataGrid.SelectedItem);
+            _controller.DeleteItem((HistoryWindowControllerBase.RankTableStruct)RankDataGrid.SelectedItem);
             RankDataGrid.Items.Refresh();
         }
 
 
         private void SasveAsPictureClick(object sender, RoutedEventArgs e)
         {
-            if (LineChart.Series[0] == null)
+            if (RankChart.Series[0] == null)
                 {
                     MessageBox.Show("there is nothing to export");
                 }
                 else
                 {
-                    var bounds = VisualTreeHelper.GetDescendantBounds(LineChart);
+                    var bounds = VisualTreeHelper.GetDescendantBounds(RankChart);
 
                     var renderBitmap = new RenderTargetBitmap((int)bounds.Width, (int)bounds.Height, 96, 96, PixelFormats.Pbgra32);
 
@@ -78,7 +78,7 @@ namespace Rocket_League_Ranking_Tracker
                     using (var drawing = isolatedVisual.RenderOpen())
                     {
                         drawing.DrawRectangle(Brushes.White, null, new Rect(new Point(), bounds.Size)); // Optional Background
-                        drawing.DrawRectangle(new VisualBrush(LineChart), null, new Rect(new Point(), bounds.Size));
+                        drawing.DrawRectangle(new VisualBrush(RankChart), null, new Rect(new Point(), bounds.Size));
                     }
 
                     renderBitmap.Render(isolatedVisual);
