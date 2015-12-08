@@ -13,16 +13,20 @@ namespace Rocket_League_Ranking_Tracker.Model
         protected string Table = "";
         protected string OrangeGoalsAddress;
         protected string BlueGoalsAddress;
+        protected string GoalsTable;
 
         private int _ranking;
         protected SQLiteConnection DbConnection;
         private Process _process;
+        private GoalTrackerModel _goalTracker;
+        
 
         public RankingModel(SQLiteConnection dbConnection)
         {
             DbConnection = dbConnection;
             OrangeGoalsAddress = CheatEngineReader.getPointers("ORANGEGOALS");
             BlueGoalsAddress = CheatEngineReader.getPointers("BLUEGOALS");
+            _goalTracker = new GoalTrackerModel();
         }
 
         public int Ranking{ get { return _ranking; } set { _ranking = value; NotifyPropertyChanged("Ranking"); } }
@@ -43,6 +47,7 @@ namespace Rocket_League_Ranking_Tracker.Model
         {
             if (RocketLeagueProcess != null)
             {
+                _goalTracker.UpdateMemory(RocketLeagueProcess);
                 var memory = new Memory(RocketLeagueProcess);
                 IntPtr rankingAddr = memory.GetAddress(RankingAddress);
                 var ranking = memory.ReadInt32(rankingAddr);
@@ -51,8 +56,22 @@ namespace Rocket_League_Ranking_Tracker.Model
                     //TODO: remove magic constants
                 {
                     UpdatePreviousRanking(ranking);
+                    _goalTracker.InsertGoals(DbConnection,GoalsTable, GetPreviousId());
                 }
             }
+        }
+
+        private int GetPreviousId()
+        {
+            string query = $"SELECT Id FROM {Table} ORDER BY Date DESC LIMIT 1";
+            var command = new SQLiteCommand(query, DbConnection);
+            var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                if ((long)reader["Id"] != 0)
+                    return (int)(long)reader["Id"];
+            }
+            return 0;
         }
 
         private void UpdatePreviousRanking(int ranking)

@@ -13,7 +13,7 @@ using Rocket_League_Ranking_Tracker.Utilities.Memory;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
-    class GoalTrackerModel : IMemoryHandler
+    class GoalTrackerModel
     {
         protected string TimerAddress = "";
         protected string BlueGoalsAddress { get; set; }
@@ -47,13 +47,10 @@ namespace Rocket_League_Ranking_Tracker.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
             }
         }
-        public Process RocketLeagueProcess { get; set; }
 
-        public void UpdateMemory()
+        public void UpdateMemory(Process process)
         {
-            if (RocketLeagueProcess != null)
-            {
-                var memory = new Memory(RocketLeagueProcess);
+                var memory = new Memory(process);
                 int time;
                 try
                 {
@@ -90,7 +87,7 @@ namespace Rocket_League_Ranking_Tracker.Model
                     });
                     _blueGoals = blueGoals;
                 }
-            }
+            
         }
 
         public enum TeamColor

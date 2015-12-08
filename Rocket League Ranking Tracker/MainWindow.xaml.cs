@@ -74,6 +74,7 @@ namespace Rocket_League_Ranking_Tracker
             var dbConnection = new SQLiteConnection(connectionString);
             dbConnection.Open();
             var rankingTables = new ArrayList (new string [] { "SoloRanking", "DualsRanking", "SoloStandardRanking", "StandardRanking" });
+            var scoreTables = new ArrayList(new string[] {"SoloGoals", "DualsGoals", "SoloStandardGoals", "StandardGoals"});
             var columns = new List<string> { "Rank", "Date", "OrangeGoals", "BlueGoals" };
 
             //TODO: Clean up, now is a mess
@@ -120,6 +121,12 @@ namespace Rocket_League_Ranking_Tracker
                         { }
                     }
                 }
+            }
+            foreach (string tableName in scoreTables)
+            {
+                var query = "create table if not exists " + tableName + " (Id INTEGER Primary Key, GameId Int, Time Int, Team Text); ";
+                var command = new SQLiteCommand(query, dbConnection);
+                command.ExecuteNonQuery();
             }
             dbConnection.Close();
         }

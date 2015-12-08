@@ -4,7 +4,7 @@
     <CheatEntry>
       <ID>12</ID>
       <Description>"SOLO"</Description>
-      <LastState Value="??" Activated="0" RealAddress="00000000"/>
+      <LastState Value="465" Activated="0" RealAddress="26CE74C4"/>
       <Color>80000008</Color>
       <VariableType>4 Bytes</VariableType>
       <Address>"RocketLeague.exe"+0155C64C</Address>
@@ -19,7 +19,7 @@
     <CheatEntry>
       <ID>14</ID>
       <Description>"DOUBLE"</Description>
-      <LastState Value="??" Activated="0" RealAddress="00000000"/>
+      <LastState Value="708" Activated="0" RealAddress="26CE7424"/>
       <Color>80000008</Color>
       <VariableType>4 Bytes</VariableType>
       <Address>"RocketLeague.exe"+0155C64C</Address>
@@ -34,7 +34,7 @@
     <CheatEntry>
       <ID>15</ID>
       <Description>"SOLOSTANDARD"</Description>
-      <LastState Value="??" Activated="0" RealAddress="00000000"/>
+      <LastState Value="400" Activated="0" RealAddress="26CE7384"/>
       <Color>80000008</Color>
       <VariableType>4 Bytes</VariableType>
       <Address>"RocketLeague.exe"+0155C64C</Address>
@@ -49,7 +49,7 @@
     <CheatEntry>
       <ID>16</ID>
       <Description>"STANDARD"</Description>
-      <LastState Value="??" Activated="0" RealAddress="00000000"/>
+      <LastState Value="682" Activated="0" RealAddress="26CE72E4"/>
       <Color>80000008</Color>
       <VariableType>4 Bytes</VariableType>
       <Address>"RocketLeague.exe"+0155C64C</Address>
@@ -64,7 +64,7 @@
     <CheatEntry>
       <ID>19</ID>
       <Description>"BLUEGOALS"</Description>
-      <LastState Value="??" Activated="0" RealAddress="00000000"/>
+      <LastState Value="2" Activated="0" RealAddress="38B0CFB8"/>
       <Color>80000008</Color>
       <VariableType>4 Bytes</VariableType>
       <Address>"RocketLeague.exe"+015CC924</Address>
@@ -76,13 +76,28 @@
     <CheatEntry>
       <ID>20</ID>
       <Description>"ORANGEGOALS"</Description>
-      <LastState Value="??" Activated="0" RealAddress="00000000"/>
+      <LastState Value="0" Activated="0" RealAddress="38B0CFBC"/>
       <Color>80000008</Color>
       <VariableType>4 Bytes</VariableType>
       <Address>"RocketLeague.exe"+015CC924</Address>
       <Offsets>
         <Offset>1BC</Offset>
         <Offset>0</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>21</ID>
+      <Description>"TIMER"</Description>
+      <LastState Value="??" Activated="0" RealAddress="00000000"/>
+      <Color>80000008</Color>
+      <VariableType>4 Bytes</VariableType>
+      <Address>"RocketLeague.exe"+014FA9CC</Address>
+      <Offsets>
+        <Offset>54</Offset>
+        <Offset>51C</Offset>
+        <Offset>0</Offset>
+        <Offset>508</Offset>
+        <Offset>150</Offset>
       </Offsets>
     </CheatEntry>
   </CheatEntries>

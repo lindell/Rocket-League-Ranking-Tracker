@@ -9,6 +9,8 @@ namespace Rocket_League_Ranking_Tracker.Model
         {
             RankingAddress = CheatEngineReader.getPointers("SOLOSTANDARD");
             Table = "SoloStandardRanking";
+            GoalsTable = "SoloStandardGoals";
+
         }
     }
 }
