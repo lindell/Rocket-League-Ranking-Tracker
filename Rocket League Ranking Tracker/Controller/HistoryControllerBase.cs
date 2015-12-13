@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using Rocket_League_Ranking_Tracker.Model;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -27,10 +31,14 @@ namespace Rocket_League_Ranking_Tracker.Controller
             public int Rank { get { return _rank; } set { _rank = value; NotifyPropertyChanged("Rank"); } }
             public DateTime Date { get { return _date; } set { _date = value; NotifyPropertyChanged("Date"); } }
             public int GoalDifference { get { return _goalDifference; } set { _goalDifference = value; NotifyPropertyChanged("GoalDifference"); } }
-
+            public ObservableCollection<GoalTrackerModel.GoalStruct> Goals { get; set; }
 
             public event PropertyChangedEventHandler PropertyChanged;
 
+            public RankTableStruct()
+            {
+                Goals = new ObservableCollection<GoalTrackerModel.GoalStruct>();
+            }
             private void NotifyPropertyChanged(String info)
             {
                 if (PropertyChanged != null)
@@ -38,7 +46,9 @@ namespace Rocket_League_Ranking_Tracker.Controller
                     PropertyChanged(this, new PropertyChangedEventArgs(info));
                 }
             }
+
         }
+
 
         /// <summary>
         /// The dataContext struct to be used in the HistoryWindow

@@ -77,8 +77,20 @@ namespace Rocket_League_Ranking_Tracker.Model
         private void UpdatePreviousRanking(int ranking)
         {
             var memory = new Memory(RocketLeagueProcess);
-            var orangeGoals = memory.ReadInt32(memory.GetAddress(OrangeGoalsAddress));
-            var blueGoals = memory.ReadInt32(memory.GetAddress(BlueGoalsAddress));
+            int orangeGoals = 0;
+            int blueGoals = 0;
+            try
+            {
+                orangeGoals = memory.ReadInt32(memory.GetAddress(OrangeGoalsAddress));
+                blueGoals = memory.ReadInt32(memory.GetAddress(BlueGoalsAddress));
+            }
+            catch (ArgumentException e)
+            {
+                if (e.Message != "Invalid address")
+                    throw e;
+            }
+
+
 
             var query = $"INSERT into {Table} (Rank, Date, OrangeGoals, BlueGoals) values ({ranking} , '{DateTime.Now}', {orangeGoals}, {blueGoals})";
             var command = new SQLiteCommand(query, DbConnection);

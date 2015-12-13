@@ -133,22 +133,22 @@ namespace Rocket_League_Ranking_Tracker
 
         private void SoloRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            new HistoryWindow(_dbConnection, "SoloRanking") {Owner = this};
+            new HistoryWindow(_dbConnection, "Solo") {Owner = this};
         }
 
         private void DualsRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            new HistoryWindow(_dbConnection, "DualsRanking") { Owner = this };
+            new HistoryWindow(_dbConnection, "Duals") { Owner = this };
         }
 
         private void SoloStandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            new HistoryWindow(_dbConnection, "SoloStandardRanking") { Owner = this };
+            new HistoryWindow(_dbConnection, "SoloStandard") { Owner = this };
         }
 
         private void StandardRankingHistoryButtonClick(object sender, RoutedEventArgs e)
         {
-            new HistoryWindow(_dbConnection, "StandardRanking") { Owner = this };
+            new HistoryWindow(_dbConnection, "Standard") { Owner = this };
         }
 
         protected override void OnStateChanged(EventArgs e)

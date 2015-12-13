@@ -14,9 +14,11 @@ using System.Windows.Media.Effects;
 using DataGrid = Microsoft.Windows.Controls.DataGrid;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System;
+using System.Collections;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Rocket_League_Ranking_Tracker.Model;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Rocket_League_Ranking_Tracker
@@ -27,15 +29,53 @@ namespace Rocket_League_Ranking_Tracker
     public partial class HistoryWindow : Window
     {
         public new string Title { get; set; }
+        private ObservableCollection<GoalBarChartStruct> barChartGoals;
+        public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeOrangeCount { get; set; }
+        public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeBlueCount { get; set; }
+
 
         readonly HistoryWindowControllerBase _controller;
-
+        //private ObservableCollection<GoalBarChartStruct> GoalsBarChartList;
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
             _controller = new HistoryWindowController(dbConnection, table);
             DataContext = _controller.DataContext;
+            _controller.DataContext.RankEntries.CollectionChanged += RankEntriesChanged;
+            BarChartGoalsTimeOrangeCount = new ObservableCollection<GoalsTimeCountStruct>();
+            BarChartGoalsTimeBlueCount = new ObservableCollection<GoalsTimeCountStruct>();
+
+            GoalBarSeriesOrange.ItemsSource = BarChartGoalsTimeOrangeCount;
+            GoalBarSeriesBlue.ItemsSource = BarChartGoalsTimeBlueCount;
+
+            CreateBarChartGoals(_controller.DataContext);
             Show();
+        }
+
+        private void RankEntriesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            CreateBarChartGoals(_controller.DataContext);
+        }
+
+        private void CreateBarChartGoals(HistoryWindowControllerBase.ControllerDataContext dataContext)
+        {
+            List<int> blue = new List<int>();
+            List<int> orange = new List<int>();
+            var timeInterval = 10;
+            var intervals = 300/ timeInterval;
+            foreach (var goal in dataContext.RankEntries.SelectMany(tableStruct => tableStruct.Goals))
+            {
+                if(goal.Team == GoalTrackerModel.TeamColor.Blue)
+                    blue.Add((goal.Time * intervals) / 300);
+                else
+                    orange.Add((goal.Time * intervals) / 300);
+            }
+            for (var i = 0; i < intervals; i++)
+            {
+                string time = $"{i / (60 / timeInterval) }:{i * timeInterval % 60}";
+                BarChartGoalsTimeOrangeCount.Add(new GoalsTimeCountStruct() {Count = orange.Count(x => x == i), Time = time });
+                BarChartGoalsTimeBlueCount.Add(new GoalsTimeCountStruct() { Count = blue.Count(x => x == i), Time = time });
+            }
         }
 
         private void ExportAsCsvClick(object sender, RoutedEventArgs e)
@@ -102,4 +142,17 @@ namespace Rocket_League_Ranking_Tracker
                 }
             }
         }
+
+
+    public class GoalsTimeCountStruct
+    {
+        public string Time { get; set; }
+        public int Count { get; set; }
+    }
+
+    internal class GoalBarChartStruct
+    {
+        public int Score { get; set; }
+        public int Ammount { get; set; }
+    }
 }

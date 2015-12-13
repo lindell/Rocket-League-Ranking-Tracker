@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Windows.Input;
+using Rocket_League_Ranking_Tracker.Model;
 
 namespace Rocket_League_Ranking_Tracker.Controller
 {
@@ -27,13 +28,13 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 Title = table
             };
 
-            var query = "SELECT * FROM " + table;
+            var query = "SELECT * FROM " + table + "Ranking";
             var command = new SQLiteCommand(query, dbConnection);
             var reader = command.ExecuteReader();
             var viewIndex = 1;
+            var prevRank = 0;
             while (reader.Read())
             {
-                
                 var orangeGoal = reader["OrangeGoals"] as int? ?? default(int);
                 int blueGoal = reader["BlueGoals"] as int? ?? default(int);
                 int rank = reader["Rank"] as int? ?? default(int);
@@ -47,10 +48,28 @@ namespace Rocket_League_Ranking_Tracker.Controller
                         diff = orangeGoal < blueGoal ? orangeGoal - blueGoal : blueGoal - orangeGoal;
 
                 var entry = new RankTableStruct() { Id = (long)reader["Id"], ViewIndex = viewIndex, Rank = rank, Date = (DateTime)reader["Date"], GoalDifference = diff};
+
+                var goalQuery = $"SELECT * FROM {table}Goals WHERE GameId = {(long)reader["id"]}";
+                var goalDbConnection = new SQLiteConnection(dbConnection.ConnectionString);
+                goalDbConnection.Open();
+                var goalCommand = new SQLiteCommand(goalQuery, goalDbConnection);
+                var goalReader = goalCommand.ExecuteReader();
+                while (goalReader.Read())
+                {
+                    var time = goalReader["Time"] as int? ?? default(int);
+                    var team = (goalReader["Team"] as string ?? default(string)) == "Blue"
+                        ? GoalTrackerModel.TeamColor.Blue
+                        : GoalTrackerModel.TeamColor.Orange;
+
+                    entry.Goals.Add(new GoalTrackerModel.GoalStruct(){Time = time, Team = team});
+                }
                 viewIndex++;
                 entry.PropertyChanged += EntryChanged;
                 DataContext.RankEntries.Add(entry);
             }
+
+
+
 
             DataContext.RankEntries.CollectionChanged += EntriesUpdated;
         }
@@ -62,7 +81,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
         {
             var csvString = "Id,Ranking,Date\n";
 
-            var query = "SELECT * FROM " + _table;
+            var query = "SELECT * FROM " + _table + "Ranking";
             var command = new SQLiteCommand(query, _dbConnection);
             var reader = command.ExecuteReader();
 
@@ -110,7 +129,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
         /// <param name="selectedStruct"></param>
         public override void DeleteItem(RankTableStruct selectedStruct)
         {
-            var query = $"DELETE FROM {_table} WHERE Id = {selectedStruct.Id};";
+            var query = $"DELETE FROM {_table}Ranking WHERE Id = {selectedStruct.Id};";
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
             DataContext.RankEntries.Remove(selectedStruct);
@@ -143,7 +162,9 @@ namespace Rocket_League_Ranking_Tracker.Controller
         private void DatabaseUpdated(object sender, UpdateEventArgs e)
         {
             if (!e.Event.Equals(UpdateEventType.Insert)) return;
-            var query = $"SELECT * FROM {_table} WHERE Id={(int) e.RowId}";
+            //TODO: Fix better solution for when goals are added.
+            if (!e.Table.Contains("Ranking")) return;
+            var query = $"SELECT * FROM {_table}Ranking WHERE Id={(int) e.RowId}";
             var command = new SQLiteCommand(query, _dbConnection);
             var reader = command.ExecuteReader();
 
@@ -176,7 +197,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             var entry = sender as RankTableStruct;
             if (entry == null) return;
             if (!EntryExists(entry.Id)) return;
-            var query = $"UPDATE {_table} SET Rank = {entry.Rank} , Date = '{entry.Date}' WHERE Id = {entry.Id};";
+            var query = $"UPDATE {_table}Ranking SET Rank = {entry.Rank} , Date = '{entry.Date}' WHERE Id = {entry.Id};";
             var command = new SQLiteCommand(query, _dbConnection);
             command.ExecuteNonQuery();
         }
@@ -188,7 +209,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
         /// <returns></returns>
         private bool EntryExists(long id)
         {
-            var query = $"SELECT EXISTS(SELECT 1 FROM {_table} WHERE Id = {id} LIMIT 1)";
+            var query = $"SELECT EXISTS(SELECT 1 FROM {_table}Ranking WHERE Id = {id} LIMIT 1)";
             var command = new SQLiteCommand(query, _dbConnection);
             var reader = command.ExecuteReader();
             return reader.HasRows;

@@ -13,7 +13,7 @@ using Rocket_League_Ranking_Tracker.Utilities.Memory;
 
 namespace Rocket_League_Ranking_Tracker.Model
 {
-    class GoalTrackerModel
+    public class GoalTrackerModel
     {
         protected string TimerAddress = "";
         protected string BlueGoalsAddress { get; set; }
@@ -50,44 +50,43 @@ namespace Rocket_League_Ranking_Tracker.Model
 
         public void UpdateMemory(Process process)
         {
-                var memory = new Memory(process);
-                int time;
-                try
-                {
-                    var address = memory.GetAddress(TimerAddress);
-                    var tmp = memory.ReadInt32(memory.GetAddress(TimerAddress));
-                }
-                catch (ArgumentException e)
-                {
-                    if (e.Message == "Invalid address")
-                    {
-                        Goals.Clear();
-                        return;
-                    }
-                }
+            var memory = new Memory(process);
+            int time = 0;
+            int orangeGoals = 0;
+            int blueGoals = 0;
+            try
+            {
+                orangeGoals = memory.ReadInt32(memory.GetAddress(OrangeGoalsAddress));
+                blueGoals = memory.ReadInt32(memory.GetAddress(BlueGoalsAddress));
                 time = memory.ReadInt32(memory.GetAddress(TimerAddress));
-                if (time > 600 || time < 0) return;
-                var orangeGoals = memory.ReadInt32(memory.GetAddress(OrangeGoalsAddress));
-                var blueGoals = memory.ReadInt32(memory.GetAddress(BlueGoalsAddress));
-
-                if (orangeGoals != _orangeGoals)
+            }
+            catch (ArgumentException e)
+            {
+                if (e.Message == "Invalid address")
                 {
-                    Goals.Add(new GoalStruct()
-                    {
-                        Team = TeamColor.Orange,
-                        Time = memory.ReadInt32(memory.GetAddress(TimerAddress))
-                    });
-                    _orangeGoals = orangeGoals;
+                    Goals.Clear();
+                    return;
                 }
-                else if (blueGoals != _blueGoals) { 
-                    Goals.Add(new GoalStruct()
-                    {
-                        Team = TeamColor.Blue,
-                        Time = memory.ReadInt32(memory.GetAddress(TimerAddress))
-                    });
-                    _blueGoals = blueGoals;
-                }
-            
+            }
+
+            if (time > 600 || time < 0) return;
+            if (orangeGoals != _orangeGoals)
+            {
+                Goals.Add(new GoalStruct()
+                {
+                    Team = TeamColor.Orange,
+                    Time = memory.ReadInt32(memory.GetAddress(TimerAddress))
+                });
+                _orangeGoals = orangeGoals;
+            }
+            else if (blueGoals != _blueGoals) { 
+                Goals.Add(new GoalStruct()
+                {
+                    Team = TeamColor.Blue,
+                    Time = memory.ReadInt32(memory.GetAddress(TimerAddress))
+                });
+                _blueGoals = blueGoals;
+            }
         }
 
         public enum TeamColor
@@ -100,6 +99,8 @@ namespace Rocket_League_Ranking_Tracker.Model
             public int Time { get; set; }
             public TeamColor Team { get; set; }
         }
+
+
 
         public void InsertGoals(SQLiteConnection dbConnection, string goalsTable,int gameId)
         {

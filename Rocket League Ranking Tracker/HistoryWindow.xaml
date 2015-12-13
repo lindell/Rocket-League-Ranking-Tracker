@@ -156,6 +156,98 @@
                             </chartingToolkit:Chart>
                         </Grid>
                     </TabItem>
+                    <TabItem Header="Goals">
+                        <Grid>
+                            <chartingToolkit:Chart Name="GoalsChart" 
+                                        VerticalAlignment="Stretch" 
+                                        HorizontalAlignment="Stretch" 
+                                        Margin="10,10,10,40" 
+                                        MaxWidth="1500" 
+                                        DockPanel.Dock="Right">
+                                <chartingToolkit:Chart.Title>
+                                    <TextBlock>
+                                    <TextBlock>
+                                        <Run Text ="{Binding Title}"/>
+                                        <Run Text =" Score"/>
+                                    </TextBlock>
+                                </TextBlock>
+                                </chartingToolkit:Chart.Title>
+
+                                <chartingToolkit:ScatterSeries 
+                                            Name="GoalSeries"
+                                            Title="{Binding Title}"
+                                            DependentValuePath="GameId" 
+                                            IndependentValuePath="Time"
+                                            ItemsSource="{Binding GoalEntries}"
+                                            IsSelectionEnabled="True"
+                                            >
+
+
+                                </chartingToolkit:ScatterSeries>
+
+                                <chartingToolkit:Chart.Axes>
+                                    <chartingToolkit:LinearAxis Orientation="Y" ShowGridLines="True"/>
+                                    <chartingToolkit:LinearAxis Location="Top" Orientation="X"/>
+                                </chartingToolkit:Chart.Axes>
+
+                            </chartingToolkit:Chart>
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem Header="Goals Bar">
+                        <Grid>
+                            <chartingToolkit:Chart Name="GoalsBarChart" 
+                                        VerticalAlignment="Stretch" 
+                                        HorizontalAlignment="Stretch" 
+                                        Margin="10,10,10,40" 
+                                        MaxWidth="1500" 
+                                        DockPanel.Dock="Right"
+                                                   
+                                                  >
+                                <chartingToolkit:Chart.Title>
+                                    <TextBlock>
+                                    <TextBlock>
+                                        <Run Text ="{Binding Title}"/>
+                                        <Run Text =" Goals"/>
+                                    </TextBlock>
+                                </TextBlock>
+                                </chartingToolkit:Chart.Title>
+
+                                <chartingToolkit:ColumnSeries 
+                                            Name="GoalBarSeriesBlue"
+                                            DependentValuePath="Count" 
+                                            IndependentValuePath="Time"
+                                            
+                                            >
+                                    <chartingToolkit:ColumnSeries.DataPointStyle>
+                                        <Style TargetType="chartingToolkit:ColumnDataPoint">
+                                            <Setter Property="Background" Value="Blue"/>
+                                        </Style>
+                                    </chartingToolkit:ColumnSeries.DataPointStyle>
+
+                                </chartingToolkit:ColumnSeries>
+
+                                <chartingToolkit:ColumnSeries 
+                                            Name="GoalBarSeriesOrange"
+                                            DependentValuePath="Count" 
+                                            IndependentValuePath="Time"
+                                            >
+                                    <chartingToolkit:ColumnSeries.DataPointStyle>
+                                        <Style TargetType="chartingToolkit:ColumnDataPoint">
+                                            <Setter Property="Background" Value="OrangeRed"/>
+                                        </Style>
+                                    </chartingToolkit:ColumnSeries.DataPointStyle>
+                                    
+                                </chartingToolkit:ColumnSeries>
+
+                                <chartingToolkit:Chart.Axes>
+                                    <chartingToolkit:LinearAxis Orientation="Y" ShowGridLines="True"/>
+                                    <!--<chartingToolkit:LinearAxis Location="Bottom" Orientation="X"/>-->
+                                </chartingToolkit:Chart.Axes>
+
+                            </chartingToolkit:Chart>
+                        </Grid>
+                    </TabItem>
                 </TabControl>
             </DockPanel>
         </Grid>
