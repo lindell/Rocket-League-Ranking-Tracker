@@ -26,7 +26,7 @@ namespace Rocket_League_Ranking_Tracker.Model
         private int _blueGoals = 0;
         public int BlueGoal { get { return _blueGoals; } set { _blueGoals = value; NotifyPropertyChanged("BlueGoals"); } }
 
-        public List<GoalStruct> Goals {get;}
+        public List<GoalMemoryStruct> Goals {get;}
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -36,7 +36,7 @@ namespace Rocket_League_Ranking_Tracker.Model
             OrangeGoalsAddress = CheatEngineReader.getPointers("ORANGEGOALS");
             BlueGoalsAddress = CheatEngineReader.getPointers("BLUEGOALS");
             TimerAddress = CheatEngineReader.getPointers("TIMER");
-            Goals = new List<GoalStruct>();
+            Goals = new List<GoalMemoryStruct>();
         }
 
 
@@ -72,7 +72,7 @@ namespace Rocket_League_Ranking_Tracker.Model
             if (time > 600 || time < 0) return;
             if (orangeGoals != _orangeGoals)
             {
-                Goals.Add(new GoalStruct()
+                Goals.Add(new GoalMemoryStruct()
                 {
                     Team = TeamColor.Orange,
                     Time = memory.ReadInt32(memory.GetAddress(TimerAddress))
@@ -80,7 +80,7 @@ namespace Rocket_League_Ranking_Tracker.Model
                 _orangeGoals = orangeGoals;
             }
             else if (blueGoals != _blueGoals) { 
-                Goals.Add(new GoalStruct()
+                Goals.Add(new GoalMemoryStruct()
                 {
                     Team = TeamColor.Blue,
                     Time = memory.ReadInt32(memory.GetAddress(TimerAddress))
@@ -94,17 +94,33 @@ namespace Rocket_League_Ranking_Tracker.Model
             Orange, Blue
         }
 
+        //public class GoalStruct
+        //{
+        //    public int Time { get; set; }
+        //    public TeamColor Team { get; set; }
+        //}
+
+
+        public enum Team
+        {
+            You, Opponent
+        }
+
         public class GoalStruct
+        {
+            public int Time { get; set; }
+            public Team Team { get; set; }
+        }
+
+        public class GoalMemoryStruct
         {
             public int Time { get; set; }
             public TeamColor Team { get; set; }
         }
 
-
-
         public void InsertGoals(SQLiteConnection dbConnection, string goalsTable,int gameId)
         {
-            foreach (GoalStruct goal in Goals)
+            foreach (GoalMemoryStruct goal in Goals)
             {
                 var query = $"INSERT into {goalsTable} (GameID ,Time, Team) values ({gameId}, {goal.Time}, '{goal.Team}')";
                 var command = new SQLiteCommand(query, dbConnection);

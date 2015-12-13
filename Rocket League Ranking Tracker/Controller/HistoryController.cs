@@ -54,14 +54,61 @@ namespace Rocket_League_Ranking_Tracker.Controller
                 goalDbConnection.Open();
                 var goalCommand = new SQLiteCommand(goalQuery, goalDbConnection);
                 var goalReader = goalCommand.ExecuteReader();
+
                 while (goalReader.Read())
                 {
                     var time = goalReader["Time"] as int? ?? default(int);
                     var team = (goalReader["Team"] as string ?? default(string)) == "Blue"
                         ? GoalTrackerModel.TeamColor.Blue
                         : GoalTrackerModel.TeamColor.Orange;
-
-                    entry.Goals.Add(new GoalTrackerModel.GoalStruct(){Time = time, Team = team});
+                    if (prevRank > rank)
+                        //Your won
+                    {
+                        if (orangeGoal > blueGoal)
+                            //You win & were orange
+                            entry.Goals.Add(new GoalTrackerModel.GoalStruct()
+                            {
+                                Time = time,
+                                Team =
+                                    team == GoalTrackerModel.TeamColor.Orange
+                                        ? GoalTrackerModel.Team.You
+                                        : GoalTrackerModel.Team.Opponent
+                            });
+                        else
+                        //You win & were blue
+                            entry.Goals.Add(new GoalTrackerModel.GoalStruct()
+                            {
+                                Time = time,
+                                Team =
+                                    team == GoalTrackerModel.TeamColor.Blue
+                                        ? GoalTrackerModel.Team.You
+                                        : GoalTrackerModel.Team.Opponent
+                            });
+                    }
+                    else
+                       //You lost
+                    {
+                        if (orangeGoal > blueGoal)
+                            //You lost & were orange
+                            entry.Goals.Add(new GoalTrackerModel.GoalStruct()
+                            {
+                                Time = time,
+                                Team =
+                                    team == GoalTrackerModel.TeamColor.Orange
+                                        ? GoalTrackerModel.Team.Opponent
+                                        : GoalTrackerModel.Team.You
+                            });
+                        else
+                            //You lost & were blue
+                            entry.Goals.Add(new GoalTrackerModel.GoalStruct()
+                            {
+                                Time = time,
+                                Team =
+                                    team == GoalTrackerModel.TeamColor.Blue
+                                        ? GoalTrackerModel.Team.Opponent
+                                        : GoalTrackerModel.Team.You
+                            });
+                    }
                 }
                 viewIndex++;
                 entry.PropertyChanged += EntryChanged;

@@ -39,6 +39,7 @@ namespace Rocket_League_Ranking_Tracker.Controller
             {
                 Goals = new ObservableCollection<GoalTrackerModel.GoalStruct>();
             }
+
             private void NotifyPropertyChanged(String info)
             {
                 if (PropertyChanged != null)

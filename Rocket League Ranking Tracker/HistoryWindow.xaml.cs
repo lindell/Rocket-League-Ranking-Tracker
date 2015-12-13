@@ -29,9 +29,9 @@ namespace Rocket_League_Ranking_Tracker
     public partial class HistoryWindow : Window
     {
         public new string Title { get; set; }
-        private ObservableCollection<GoalBarChartStruct> barChartGoals;
-        public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeOrangeCount { get; set; }
-        public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeBlueCount { get; set; }
+        //private ObservableCollection<GoalBarChartStruct> barChartGoals;
+        public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeYouCount { get; set; }
+        public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeOpponentCount { get; set; }
 
 
         readonly HistoryWindowControllerBase _controller;
@@ -42,11 +42,11 @@ namespace Rocket_League_Ranking_Tracker
             _controller = new HistoryWindowController(dbConnection, table);
             DataContext = _controller.DataContext;
             _controller.DataContext.RankEntries.CollectionChanged += RankEntriesChanged;
-            BarChartGoalsTimeOrangeCount = new ObservableCollection<GoalsTimeCountStruct>();
-            BarChartGoalsTimeBlueCount = new ObservableCollection<GoalsTimeCountStruct>();
+            BarChartGoalsTimeYouCount = new ObservableCollection<GoalsTimeCountStruct>();
+            BarChartGoalsTimeOpponentCount = new ObservableCollection<GoalsTimeCountStruct>();
 
-            GoalBarSeriesOrange.ItemsSource = BarChartGoalsTimeOrangeCount;
-            GoalBarSeriesBlue.ItemsSource = BarChartGoalsTimeBlueCount;
+            GoalBarSeriesOpponent.ItemsSource = BarChartGoalsTimeYouCount;
+            GoalBarSeriesYou.ItemsSource = BarChartGoalsTimeOpponentCount;
 
             CreateBarChartGoals(_controller.DataContext);
             Show();
@@ -59,22 +59,22 @@ namespace Rocket_League_Ranking_Tracker
 
         private void CreateBarChartGoals(HistoryWindowControllerBase.ControllerDataContext dataContext)
         {
-            List<int> blue = new List<int>();
-            List<int> orange = new List<int>();
+            List<int> you = new List<int>();
+            List<int> opponent = new List<int>();
             var timeInterval = 10;
             var intervals = 300/ timeInterval;
             foreach (var goal in dataContext.RankEntries.SelectMany(tableStruct => tableStruct.Goals))
             {
-                if(goal.Team == GoalTrackerModel.TeamColor.Blue)
-                    blue.Add((goal.Time * intervals) / 300);
+                if(goal.Team == GoalTrackerModel.Team.You)
+                    you.Add((goal.Time * intervals) / 300);
                 else
-                    orange.Add((goal.Time * intervals) / 300);
+                    opponent.Add((goal.Time * intervals) / 300);
             }
             for (var i = 0; i < intervals; i++)
             {
                 string time = $"{i / (60 / timeInterval) }:{i * timeInterval % 60}";
-                BarChartGoalsTimeOrangeCount.Add(new GoalsTimeCountStruct() {Count = orange.Count(x => x == i), Time = time });
-                BarChartGoalsTimeBlueCount.Add(new GoalsTimeCountStruct() { Count = blue.Count(x => x == i), Time = time });
+                BarChartGoalsTimeYouCount.Add(new GoalsTimeCountStruct() {Count = opponent.Count(x => x == i), Time = time });
+                BarChartGoalsTimeOpponentCount.Add(new GoalsTimeCountStruct() { Count = you.Count(x => x == i), Time = time });
             }
         }
 
@@ -148,11 +148,5 @@ namespace Rocket_League_Ranking_Tracker
     {
         public string Time { get; set; }
         public int Count { get; set; }
-    }
-
-    internal class GoalBarChartStruct
-    {
-        public int Score { get; set; }
-        public int Ammount { get; set; }
     }
 }

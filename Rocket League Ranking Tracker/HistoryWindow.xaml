@@ -163,44 +163,6 @@
                                         HorizontalAlignment="Stretch" 
                                         Margin="10,10,10,40" 
                                         MaxWidth="1500" 
-                                        DockPanel.Dock="Right">
-                                <chartingToolkit:Chart.Title>
-                                    <TextBlock>
-                                    <TextBlock>
-                                        <Run Text ="{Binding Title}"/>
-                                        <Run Text =" Score"/>
-                                    </TextBlock>
-                                </TextBlock>
-                                </chartingToolkit:Chart.Title>
-
-                                <chartingToolkit:ScatterSeries 
-                                            Name="GoalSeries"
-                                            Title="{Binding Title}"
-                                            DependentValuePath="GameId" 
-                                            IndependentValuePath="Time"
-                                            ItemsSource="{Binding GoalEntries}"
-                                            IsSelectionEnabled="True"
-                                            >
-
-
-                                </chartingToolkit:ScatterSeries>
-
-                                <chartingToolkit:Chart.Axes>
-                                    <chartingToolkit:LinearAxis Orientation="Y" ShowGridLines="True"/>
-                                    <chartingToolkit:LinearAxis Location="Top" Orientation="X"/>
-                                </chartingToolkit:Chart.Axes>
-
-                            </chartingToolkit:Chart>
-                        </Grid>
-                    </TabItem>
-
-                    <TabItem Header="Goals Bar">
-                        <Grid>
-                            <chartingToolkit:Chart Name="GoalsBarChart" 
-                                        VerticalAlignment="Stretch" 
-                                        HorizontalAlignment="Stretch" 
-                                        Margin="10,10,10,40" 
-                                        MaxWidth="1500" 
                                         DockPanel.Dock="Right"
                                                    
                                                   >
@@ -214,7 +176,8 @@
                                 </chartingToolkit:Chart.Title>
 
                                 <chartingToolkit:ColumnSeries 
-                                            Name="GoalBarSeriesBlue"
+                                            Name="GoalBarSeriesYou"
+                                            Title="Your goals"
                                             DependentValuePath="Count" 
                                             IndependentValuePath="Time"
                                             
@@ -228,13 +191,16 @@
                                 </chartingToolkit:ColumnSeries>
 
                                 <chartingToolkit:ColumnSeries 
-                                            Name="GoalBarSeriesOrange"
+                                            Name="GoalBarSeriesOpponent"
+                                            Title="Opponent goals"
                                             DependentValuePath="Count" 
                                             IndependentValuePath="Time"
                                             >
                                     <chartingToolkit:ColumnSeries.DataPointStyle>
                                         <Style TargetType="chartingToolkit:ColumnDataPoint">
-                                            <Setter Property="Background" Value="OrangeRed"/>
+                                            <Setter Property="Background" Value="Red"/>
+                                            <Setter Property="Foreground" Value="Red"/>
+
                                         </Style>
                                     </chartingToolkit:ColumnSeries.DataPointStyle>
                                     
