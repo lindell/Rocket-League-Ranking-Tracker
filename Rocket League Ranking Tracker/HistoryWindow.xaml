@@ -33,7 +33,7 @@
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>
-                <TabControl>
+                <TabControl Name="ChartTabControl">
                     <TabItem Header="Rank">
                         <Grid>
                             <chartingToolkit:Chart Name="RankChart" 
@@ -112,41 +112,22 @@
                                     </TextBlock>
                                 </chartingToolkit:Chart.Title>
 
-                                <chartingToolkit:LineSeries 
+                                <chartingToolkit:ColumnSeries 
                                                 Name="ScoreSeries"
-                                                Title="{Binding Title}"
+                                                Title="Goal Difference"
                                                 DependentValuePath="GoalDifference" 
                                                 IndependentValuePath="ViewIndex"
                                                 ItemsSource="{Binding RankEntries}"
                                                 IsSelectionEnabled="True"
                                                 >
-                                    <chartingToolkit:LineSeries.DataPointStyle>
-                                        <Style TargetType="chartingToolkit:LineDataPoint">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Setter Property="Background" Value="DodgerBlue"/>
-                                            <Setter Property="BitmapEffect">
-                                                <Setter.Value>
-                                                    <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
-                                                </Setter.Value>
-                                            </Setter>
-
-                                            <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="BitmapEffect">
-                                                        <Setter.Value>
-                                                            <OuterGlowBitmapEffect GlowColor="Red" GlowSize="10"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Setter Property="Background" Value="Red"/>
-
-                                                </Trigger>
-                                            </Style.Triggers>
+                                    <chartingToolkit:ColumnSeries.DataPointStyle>
+                                        <Style TargetType="chartingToolkit:ColumnDataPoint">
+                                            <Setter Property="Background" Value="Blue"/>
                                         </Style>
+                                    </chartingToolkit:ColumnSeries.DataPointStyle>
 
-                                    </chartingToolkit:LineSeries.DataPointStyle>
 
-
-                                </chartingToolkit:LineSeries>
+                                </chartingToolkit:ColumnSeries>
 
                                 <chartingToolkit:Chart.Axes>
                                     <chartingToolkit:LinearAxis Orientation="Y" ShowGridLines="True"/>
@@ -176,7 +157,7 @@
                                 </chartingToolkit:Chart.Title>
 
                                 <chartingToolkit:ColumnSeries 
-                                            Name="GoalBarSeriesYou"
+                                            Name="GoalsSeriesYou"
                                             Title="Your goals"
                                             DependentValuePath="Count" 
                                             IndependentValuePath="Time"
@@ -191,7 +172,7 @@
                                 </chartingToolkit:ColumnSeries>
 
                                 <chartingToolkit:ColumnSeries 
-                                            Name="GoalBarSeriesOpponent"
+                                            Name="GoalsSeriesOpponent"
                                             Title="Opponent goals"
                                             DependentValuePath="Count" 
                                             IndependentValuePath="Time"
@@ -199,18 +180,28 @@
                                     <chartingToolkit:ColumnSeries.DataPointStyle>
                                         <Style TargetType="chartingToolkit:ColumnDataPoint">
                                             <Setter Property="Background" Value="Red"/>
-                                            <Setter Property="Foreground" Value="Red"/>
-
                                         </Style>
                                     </chartingToolkit:ColumnSeries.DataPointStyle>
-                                    
+
+
+
+                                    </chartingToolkit:ColumnSeries>
+                                <chartingToolkit:ColumnSeries 
+                                            Name="GoalsSeriesTotal"
+                                            Title="Total goals"
+                                            DependentValuePath="Count" 
+                                            IndependentValuePath="Time"
+                                            >
+                                    <chartingToolkit:ColumnSeries.DataPointStyle>
+                                        <Style TargetType="chartingToolkit:ColumnDataPoint">
+                                            <Setter Property="Background" Value="Black"/>
+                                        </Style>
+                                    </chartingToolkit:ColumnSeries.DataPointStyle>
                                 </chartingToolkit:ColumnSeries>
 
                                 <chartingToolkit:Chart.Axes>
                                     <chartingToolkit:LinearAxis Orientation="Y" ShowGridLines="True"/>
-                                    <!--<chartingToolkit:LinearAxis Location="Bottom" Orientation="X"/>-->
                                 </chartingToolkit:Chart.Axes>
-
                             </chartingToolkit:Chart>
                         </Grid>
                     </TabItem>

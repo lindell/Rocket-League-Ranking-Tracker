@@ -15,6 +15,7 @@ using DataGrid = Microsoft.Windows.Controls.DataGrid;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -29,13 +30,13 @@ namespace Rocket_League_Ranking_Tracker
     public partial class HistoryWindow : Window
     {
         public new string Title { get; set; }
-        //private ObservableCollection<GoalBarChartStruct> barChartGoals;
         public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeYouCount { get; set; }
         public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeOpponentCount { get; set; }
+        public ObservableCollection<GoalsTimeCountStruct> BarChartGoalsTimeTotalCount { get; set; }
+
 
 
         readonly HistoryWindowControllerBase _controller;
-        //private ObservableCollection<GoalBarChartStruct> GoalsBarChartList;
         public HistoryWindow(SQLiteConnection dbConnection, string table)
         {
             InitializeComponent();
@@ -44,9 +45,11 @@ namespace Rocket_League_Ranking_Tracker
             _controller.DataContext.RankEntries.CollectionChanged += RankEntriesChanged;
             BarChartGoalsTimeYouCount = new ObservableCollection<GoalsTimeCountStruct>();
             BarChartGoalsTimeOpponentCount = new ObservableCollection<GoalsTimeCountStruct>();
+            BarChartGoalsTimeTotalCount = new ObservableCollection<GoalsTimeCountStruct>();
 
-            GoalBarSeriesOpponent.ItemsSource = BarChartGoalsTimeYouCount;
-            GoalBarSeriesYou.ItemsSource = BarChartGoalsTimeOpponentCount;
+            GoalsSeriesOpponent.ItemsSource = BarChartGoalsTimeYouCount;
+            GoalsSeriesYou.ItemsSource = BarChartGoalsTimeOpponentCount;
+            GoalsSeriesTotal.ItemsSource = BarChartGoalsTimeTotalCount;
 
             CreateBarChartGoals(_controller.DataContext);
             Show();
@@ -72,9 +75,10 @@ namespace Rocket_League_Ranking_Tracker
             }
             for (var i = 0; i < intervals; i++)
             {
-                string time = $"{i / (60 / timeInterval) }:{i * timeInterval % 60}";
+                string time = $"{i / (60 / timeInterval) }:{(i * timeInterval % 60).ToString("00")}";
                 BarChartGoalsTimeYouCount.Add(new GoalsTimeCountStruct() {Count = opponent.Count(x => x == i), Time = time });
                 BarChartGoalsTimeOpponentCount.Add(new GoalsTimeCountStruct() { Count = you.Count(x => x == i), Time = time });
+                BarChartGoalsTimeTotalCount.Add(new GoalsTimeCountStruct() { Count = you.Count(x => x == i) + opponent.Count(x => x == i), Time = time });
             }
         }
 
@@ -109,8 +113,9 @@ namespace Rocket_League_Ranking_Tracker
                     MessageBox.Show("there is nothing to export");
                 }
                 else
-                {
-                    var bounds = VisualTreeHelper.GetDescendantBounds(RankChart);
+            {
+                    Visual chart = (Visual) ChartTabControl.SelectedContent;
+                    Rect bounds = VisualTreeHelper.GetDescendantBounds(chart);
 
                     var renderBitmap = new RenderTargetBitmap((int)bounds.Width, (int)bounds.Height, 96, 96, PixelFormats.Pbgra32);
 
@@ -118,7 +123,7 @@ namespace Rocket_League_Ranking_Tracker
                     using (var drawing = isolatedVisual.RenderOpen())
                     {
                         drawing.DrawRectangle(Brushes.White, null, new Rect(new Point(), bounds.Size)); // Optional Background
-                        drawing.DrawRectangle(new VisualBrush(RankChart), null, new Rect(new Point(), bounds.Size));
+                        drawing.DrawRectangle(new VisualBrush(chart), null, new Rect(new Point(), bounds.Size));
                     }
 
                     renderBitmap.Render(isolatedVisual);
